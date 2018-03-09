@@ -1,0 +1,15 @@
+name: redux_persist
+description: Persist Redux State
+version: 0.0.1
+homepage: https://github.com/Cretezy/redux_persist
+author: Charles Crete <charles@cretezy.com>
+
+dependencies:
+  flutter:
+    sdk: flutter
+  redux: ^2.1.1
+  path_provider: ^0.3.1
+
+dev_dependencies:
+  test: ^0.12.0
+  flutter_redux: "^0.3.5"
