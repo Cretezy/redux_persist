@@ -83,4 +83,4 @@ AppState reducer(state, action) {
 
 ## Features and bugs
 
-Please file feature requests and bugs at the [issue tracker][https://github.com/Cretezy/redux_persist/issues].
+Please file feature requests and bugs at the [issue tracker](https://github.com/Cretezy/redux_persist/issues).
