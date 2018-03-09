@@ -1,6 +1,6 @@
-# redux_persist
+# redux_persist [![pub package](https://img.shields.io/pub/v/redux_persist.svg)](https://pub.dartlang.org/packages/redux_persist)
 
-Persist Redux state across app restarts in Flutter.
+Persist Redux state across app restarts in Flutter or custom storage engines.
 
 [Article](https://medium.com/@cretezy/persist-redux-in-flutter-a2082bbb9aa0).
 
@@ -99,6 +99,20 @@ Widget build(BuildContext context) {
     persistor: persistor,
     child: MyApp()
   );
+}
+```
+
+## Custom Storage Engines
+
+If you are not using `redux_persist` in Flutter, you can pass a custom `StorageEngine` to the `storage` param of the Persistor.
+
+You will need to implement the following interface to save/load a JSON string to disk:
+
+```dart
+abstract class StorageEngine {
+  external Future<void> save(String json);
+
+  external Future<String> load();
 }
 ```
 
