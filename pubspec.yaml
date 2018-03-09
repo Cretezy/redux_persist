@@ -4,6 +4,9 @@ version: 0.0.1
 homepage: https://github.com/Cretezy/redux_persist
 author: Charles Crete <charles@cretezy.com>
 
+environment:
+  sdk: ">=1.24.0 <2.0.0"
+
 dependencies:
   flutter:
     sdk: flutter
@@ -12,4 +15,4 @@ dependencies:
 
 dev_dependencies:
   test: ^0.12.0
-  flutter_redux: "^0.3.5"
+  flutter_redux: ^0.3.5
