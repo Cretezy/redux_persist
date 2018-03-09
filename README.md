@@ -2,6 +2,8 @@
 
 Persist Redux state across app restarts in Flutter.
 
+[Article](https://medium.com/@cretezy/persist-redux-in-flutter-a2082bbb9aa0).
+
 ## Usage
 
 See [example](example) for a full overview.
