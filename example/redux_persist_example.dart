@@ -28,6 +28,7 @@ class AppState {
 class IncrementCounterAction {}
 
 AppState reducer(state, action) {
+  // Load to state
   if (action is LoadAction<AppState>) {
     return action.state;
   }
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
   var store;
 
   MyApp() {
+    // Create Persistor
     persistor =
         new Persistor<AppState>(key: "my-app", decoder: AppState.fromJson);
 
@@ -54,19 +56,25 @@ class MyApp extends StatelessWidget {
         initialState: new AppState(),
         middleware: [persistor.createMiddleware()]);
 
+    // Load state and dispatch LoadAction
     persistor.load(store);
   }
 
   @override
   Widget build(BuildContext context) {
-    return new StoreProvider(
-      store: store,
-      child:
-          new MaterialApp(title: 'Redux Persist Demo', home: new MyHomePage()),
+    // PersistorGate waits for state to be loaded before rendering
+    return new PersistorGate(
+      persistor: persistor,
+      child: new StoreProvider(
+        store: store,
+        child: new MaterialApp(
+            title: 'Redux Persist Demo', home: new MyHomePage()),
+      ),
     );
   }
 }
 
+// Counter example
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -82,25 +90,27 @@ class MyHomePage extends StatelessWidget {
               'You have pushed the button this many times:',
             ),
             new StoreConnector<AppState, String>(
-                converter: (store) => store.state.counter.toString(),
-                builder: (context, count) => new Text(
-                      '$count',
-                      style: Theme.of(context).textTheme.display1,
-                    )),
+              converter: (store) => store.state.counter.toString(),
+              builder: (context, count) => new Text(
+                    '$count',
+                    style: Theme.of(context).textTheme.display1,
+                  ),
+            ),
           ],
         ),
       ),
       floatingActionButton: new StoreConnector<AppState, VoidCallback>(
-          converter: (store) {
-            // Return a `VoidCallback`, which is a fancy name for a function
-            // with no parameters. It only dispatches an Increment action.
-            return () => store.dispatch(new IncrementCounterAction());
-          },
-          builder: (context, callback) => new FloatingActionButton(
-                onPressed: callback,
-                tooltip: 'Increment',
-                child: new Icon(Icons.add),
-              )),
+        converter: (store) {
+          // Return a `VoidCallback`, which is a fancy name for a function
+          // with no parameters. It only dispatches an Increment action.
+          return () => store.dispatch(new IncrementCounterAction());
+        },
+        builder: (context, callback) => new FloatingActionButton(
+              onPressed: callback,
+              tooltip: 'Increment',
+              child: new Icon(Icons.add),
+            ),
+      ),
     );
   }
 }

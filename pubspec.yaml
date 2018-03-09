@@ -1,6 +1,6 @@
 name: redux_persist
 description: Persist Redux State
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/Cretezy/redux_persist
 author: Charles Crete <charles@cretezy.com>
 

@@ -81,6 +81,22 @@ AppState reducer(state, action) {
 }
 ```
 
+## Persistor Gate
+
+If you want to wait until rendering you app until the state is loaded, use the `PersistorGate`:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  return new PersistorGate(
+    persistor: persistor,
+    child: MyApp()
+  );
+}
+```
+
+If you want to display a loading screen (or slash screen), pass the Widget to render to the `loading` param of PersistorGate.
+
 ## Features and bugs
 
 Please file feature requests and bugs at the [issue tracker](https://github.com/Cretezy/redux_persist/issues).
