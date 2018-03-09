@@ -49,12 +49,16 @@ class MyApp extends StatelessWidget {
 
   MyApp() {
     // Create Persistor
-    persistor =
-        new Persistor<AppState>(key: "my-app", decoder: AppState.fromJson);
+    persistor = new Persistor<AppState>(
+      storage: new FlutterStorage("my-app"),
+      decoder: AppState.fromJson,
+    );
 
-    store = new Store<AppState>(reducer,
-        initialState: new AppState(),
-        middleware: [persistor.createMiddleware()]);
+    store = new Store<AppState>(
+      reducer,
+      initialState: new AppState(),
+      middleware: [persistor.createMiddleware()],
+    );
 
     // Load state and dispatch LoadAction
     persistor.load(store);

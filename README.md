@@ -42,15 +42,20 @@ The `fromJson` is required, but can be renamed)
 
 ### Persistor
 
-Next, create your persistor and store, then load the last state in.
+Next, create your persistor, storage engine, and store, then load the last state in.
 This will usually be in your `main` or in your root widget:
 
 ```dart
-persistor = new Persistor<AppState>(key: "my-app", decoder: AppState.fromJson);
+persistor = new Persistor<AppState>(
+  storage: new FlutterStorage("my-app"),
+  decoder: AppState.fromJson,
+);
 
-store = new Store<AppState>(reducer,
-    initialState: new AppState(),
-    middleware: [persistor.createMiddleware()]);
+store = new Store<AppState>(
+  reducer,
+  initialState: new AppState(),
+  middleware: [persistor.createMiddleware()],
+);
 
 persistor.load(store);
 ```

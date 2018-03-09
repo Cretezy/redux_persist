@@ -1,3 +1,8 @@
+## [0.1.0] - 2018-03-09
+
+* Create generic StorageEngine.
+* Create FlutterStorage.
+
 ## [0.0.3] - 2018-03-09
 
 * Added documentation.
