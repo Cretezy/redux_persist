@@ -8,14 +8,17 @@ import 'package:flutter/widgets.dart';
 import 'package:redux/redux.dart';
 import 'package:path_provider/path_provider.dart';
 
+/// Decoder of state from [json] to <T>
 typedef T Decoder<T>(dynamic json);
 
+/// Action being dispatched when loading state from disk.
 class LoadAction<T> {
   final T state;
 
   LoadAction(this.state);
 }
 
+// Persistor class that saves/loads to/from disk.
 class Persistor<T> {
   final String key;
   final Decoder<T> decoder;
@@ -24,6 +27,7 @@ class Persistor<T> {
 
   Persistor({this.key, this.decoder});
 
+  /// Middleware used for Redux which saves on each action.
   Middleware createMiddleware() {
     return (Store store, action, NextDispatcher next) {
       next(action);
@@ -33,6 +37,7 @@ class Persistor<T> {
     };
   }
 
+  /// Load state from disk and dispatch LoadAction to [store]
   Future<void> load(Store<T> store) async {
     final state = await _loadFromFile();
     store.dispatch(new LoadAction<T>(state));
@@ -70,6 +75,7 @@ class Persistor<T> {
   Stream get loadStream => loadStreamController.stream;
 }
 
+// PersistorGate waits until state is loaded to render the child
 class PersistorGate extends StatefulWidget {
   final persistor;
   final child;

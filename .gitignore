@@ -7,3 +7,4 @@ packages
 ios
 .flutter-plugins
 pubspec.lock
+doc/api/
