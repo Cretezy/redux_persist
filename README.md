@@ -4,6 +4,14 @@ Persist Redux state across app restarts in Flutter or custom storage engines.
 
 [Article](https://medium.com/@cretezy/persist-redux-in-flutter-a2082bbb9aa0).
 
+Features:
+
+* Save and load from multiple engine (Flutter, custom, etc)
+* Fully type safe
+* Transform state and raw on load/save
+* Flutter integration (`PersistorGate`)
+* Easy to use, integrate into your codebase in a few minutes!
+
 ## Usage
 
 See [example](example) for a full overview.
@@ -172,11 +180,59 @@ class AppState {
   // ...
 
   static AppState fromJson(dynamic json) {
-    return new AppState(name: json["name"]); // No `counter`
+    return new AppState(name: json["name"]); // Don't load counter, will use default of 0
   }
 
-  Map toJson() => {'name': name}; // No counter
+  Map toJson() => {'name': name}; // Don't save counter
 }
+```
+
+## Transforms
+
+All transformers are ran in order, from first to last.
+
+Make sure all transformation are pure. Do not modify the original state passed.
+
+### State
+
+State transformations transform your *state*
+before it's written to disk (on save) or loaded from disk (on load).
+
+```dart
+persistor = new Persistor<AppState>(
+  // ...
+  transforms: new Transforms(
+    onSave: [
+      // Set counter to 3 when writing to disk
+      (state) => state.copyWith(counter: 3),
+    ],
+    onLoad: [
+      // Set counter to 0 when loading from disk
+      (state) => state.copyWith(counter: 0),
+    ],
+  ),
+);
+```
+
+### Raw
+
+Raw transformation are applied to the raw text (JSON)
+before it's written to disk (on save) or loaded from disk (on load).
+
+```dart
+persistor = new Persistor<AppState>(
+  // ...
+  rawTransforms: new RawTransforms(
+    onSave: [
+      // Encrypt raw json
+      (json) => encrypt(json),
+    ],
+    onLoad: [
+      // Decrypt raw json
+      (json) => decrypt(json),
+    ],
+  )
+);
 ```
 
 ## Features and bugs

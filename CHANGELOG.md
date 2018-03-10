@@ -1,3 +1,7 @@
+## [0.3.0] - 2018-03-10
+
+* Add state and raw transformers.
+
 ## [0.2.0] - 2018-03-10
 
 * Move Flutter-specific code to separate, unexported file.
