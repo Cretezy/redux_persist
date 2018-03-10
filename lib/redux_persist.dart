@@ -5,7 +5,14 @@ import 'dart:convert';
 
 import 'package:redux/redux.dart';
 
-export 'src/flutter.dart' show FlutterStorage, PersistorGate;
+// Export Flutter-specific code
+//export 'src/flutter.dart'
+//    show
+//        FlutterStorage,
+//        PersistorGate,
+//        FlutterSaveLocation,
+//        SharedPreferenceEngine,
+//        DocumentFileEngine;
 
 // Interface for storage engines
 abstract class StorageEngine {
@@ -24,7 +31,7 @@ class LoadAction<T> {
   LoadAction(this.state);
 }
 
-// Persistor class that saves/loads to/from disk.
+/// Persistor class that saves/loads to/from disk.
 class Persistor<T> {
   final StorageEngine storage;
   final Decoder<T> decoder;
@@ -48,7 +55,7 @@ class Persistor<T> {
   /// Load state from disk and dispatch LoadAction to [store]
   Future<void> load(Store<T> store) async {
     final json = await storage.load();
-    final state = decoder(json);
+    final state = json != null ? decoder(JSON.decode(json)) : null;
 
     // Dispatch LoadAction to store
     store.dispatch(new LoadAction<T>(state));

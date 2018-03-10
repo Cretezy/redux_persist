@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux_persist/flutter.dart';
 import 'package:redux_persist/redux_persist.dart';
 
 void main() {
@@ -30,7 +31,7 @@ class IncrementCounterAction {}
 AppState reducer(state, action) {
   // Load to state
   if (action is LoadAction<AppState>) {
-    return action.state;
+    return action.state ?? state;
   }
 
   switch (action.runtimeType) {

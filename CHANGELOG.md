@@ -1,3 +1,12 @@
+## [0.2.0] - 2018-03-10
+
+* Move Flutter-specific code to separate, unexported file.
+  It is likely this will become it's own pacakge.
+* Add SaveLocation for Flutter storage engine.
+* Add SharedPreference sub-engine for Flutter storage engine (make default).
+* Fix PersistorGate passing variables to state and initialization.
+* Add more docs.
+
 ## [0.1.0] - 2018-03-09
 
 * Create generic StorageEngine.
