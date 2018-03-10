@@ -70,11 +70,11 @@ class MyApp extends StatelessWidget {
     // PersistorGate waits for state to be loaded before rendering
     return new PersistorGate(
       persistor: persistor,
-      child: new StoreProvider(
-        store: store,
-        child: new MaterialApp(
-            title: 'Redux Persist Demo', home: new MyHomePage()),
-      ),
+      child: (context) => new StoreProvider(
+            store: store,
+            child: new MaterialApp(
+                title: 'Redux Persist Demo', home: new MyHomePage()),
+          ),
     );
   }
 }

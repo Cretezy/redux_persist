@@ -45,7 +45,7 @@ use the `PersistorGate`:
 Widget build(BuildContext context) {
   return new PersistorGate(
     persistor: persistor,
-    child: MyApp(),
+    child: (context) => MyApp(),
   );
 }
 ```
@@ -57,7 +57,7 @@ pass a widget to render to the `loading` param of `PersistorGate`:
 new PersistorGate(
   persistor: persistor,
   loading: SlashScreen(), // !!!
-  child: MyApp(),
+    child: (context) => MyApp(),
 );
 ```
 
