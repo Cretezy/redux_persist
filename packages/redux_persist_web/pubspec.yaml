@@ -1,0 +1,19 @@
+name: redux_persist_web
+description: Redux Persist Web Integration
+version: 0.4.0
+homepage: https://github.com/Cretezy/redux_persist/tree/master/packages/redux_persist_web
+author: Charles Crete <charles@cretezy.com>
+
+environment:
+  sdk: ">=1.24.0 <2.0.0"
+
+dependencies:
+  redux_persist: ^0.4.0
+
+dev_dependencies:
+  redux_persist:
+    path: ../redux_persist
+
+dependency_overrides:
+  redux_persist:
+    path: ../redux_persist

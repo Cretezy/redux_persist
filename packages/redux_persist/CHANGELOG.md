@@ -1,3 +1,7 @@
+## [0.4.0] - 2018-03-10
+
+* Decouple Flutter and Web into different packages.
+
 ## [0.3.0] - 2018-03-10
 
 * Add state and raw transformers.

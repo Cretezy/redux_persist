@@ -3,7 +3,6 @@
 .idea
 .packages
 .pub/
-packages
 ios
 .flutter-plugins
 pubspec.lock
