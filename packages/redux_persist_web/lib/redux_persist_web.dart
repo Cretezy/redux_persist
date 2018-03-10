@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:html';
 
 import 'package:redux_persist/redux_persist.dart';
@@ -10,7 +11,7 @@ class WebStorage implements StorageEngine {
 
   @override
   load() {
-    return window.localStorage[key];
+    return new Future.value(window.localStorage[key]);
   }
 
   @override
