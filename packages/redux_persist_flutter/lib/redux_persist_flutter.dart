@@ -89,10 +89,10 @@ class SharedPreferenceEngine implements StorageEngine {
 /// PersistorGate waits until state is loaded to render the child
 class PersistorGate extends StatefulWidget {
   final Persistor persistor;
-  final WidgetBuilder child;
+  final WidgetBuilder builder;
   final Widget loading;
 
-  PersistorGate({this.persistor, this.child, this.loading});
+  PersistorGate({this.persistor, this.builder, this.loading});
 
   @override
   State<PersistorGate> createState() => new PersistorGateState();
@@ -124,7 +124,7 @@ class PersistorGateState extends State<PersistorGate> {
   Widget build(BuildContext context) {
     // Show if loaded, else show [loading] if it exist
     return _loaded
-        ? widget.child(context)
+        ? widget.builder(context)
         : (widget.loading ?? new Container(width: 0.0, height: 0.0));
   }
 }
