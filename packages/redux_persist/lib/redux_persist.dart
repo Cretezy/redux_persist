@@ -15,12 +15,18 @@ abstract class StorageEngine {
 /// Decoder of state from [json] to <T>
 typedef T Decoder<T>(dynamic json);
 
-/// Action being dispatched when loading state from disk.
-class LoadAction<T> {
+/// Action being dispatched when done loading the state from disk.
+class LoadedAction<T> {
   final T state;
 
-  LoadAction(this.state);
+  LoadedAction(this.state);
 }
+
+/// Action being dispatched to load the state from disk.
+class LoadAction<T> {}
+
+/// Action being dispatched when error loading/saving to disk
+class PersistorErrorAction {}
 
 /// Persistor class that saves/loads to/from disk.
 class Persistor<T> {
@@ -30,27 +36,51 @@ class Persistor<T> {
   final Transforms<T> transforms;
   final RawTransforms rawTransforms;
 
-  final StreamController loadStreamController =
+  final StreamController<void> loadStreamController =
       new StreamController.broadcast();
+
+  final bool debug;
 
   var loaded = false;
 
-  Persistor({this.storage, this.decoder, this.transforms, this.rawTransforms});
+  Persistor({
+    this.storage,
+    this.decoder,
+    this.transforms,
+    this.rawTransforms,
+    this.debug = false,
+  });
 
   /// Middleware used for Redux which saves on each action.
   Middleware createMiddleware() {
-    return (Store store, action, NextDispatcher next) {
+    return (Store store, dynamic action, NextDispatcher next) {
       next(action);
 
-      // Save on each action
-      save(store.state);
+      // Don't run load/save on error
+      if (action is! PersistorErrorAction) {
+        try {
+          if (action is LoadAction<T>) {
+            // Load and dispatch to state
+            load().then((state) => store.dispatch(new LoadedAction<T>(state)));
+          } else {
+            // Save
+            save(store.state as T);
+          }
+        } catch (error) {
+          store.dispatch(new PersistorErrorAction());
+        }
+      }
     };
   }
 
+  void start(Store<T> store) {
+    store.dispatch(new LoadAction<T>());
+  }
+
   /// Load state from disk and dispatch LoadAction to [store]
-  Future<T> load(Store<T> store) async {
+  Future<T> load() async {
     var json = await storage.load();
-    var state;
+    T state;
 
     if (json != null) {
       rawTransforms?.onLoad?.forEach((transform) {
@@ -65,9 +95,6 @@ class Persistor<T> {
         state = transform(state);
       });
     }
-
-    // Dispatch LoadAction to store
-    store.dispatch(new LoadAction<T>(state));
 
     // Emit
     loadStreamController.add(true);

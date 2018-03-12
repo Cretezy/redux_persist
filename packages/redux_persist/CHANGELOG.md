@@ -1,3 +1,12 @@
+## [0.5.0] - 2018-03-12
+
+Breaking changes:
+* Change `persistor.load(store)` to `persistor.start(store)` for initial loading.
+* Change `LoadAction<T>` to `LoadedAction<T>`.
+* Add `LoadAction` (action dispatch to start loading).
+* Add `PersistorErrorAction` (action dispatched on save/load error).
+* Add `debug` persistor option, doesn't do anything yet.
+
 ## [0.4.0] - 2018-03-10
 
 * Decouple Flutter and Web into different packages.

@@ -23,7 +23,7 @@ Storage Engines:
 See [Flutter example](https://github.com/Cretezy/redux_persist/tree/master/packages/redux_persist_flutter/example) for a full overview.
 
 The library creates a middleware that saves on every action.
-It also loads on initial load and sets a `LoadAction` to your store.
+It also loads on initial load and sets a `LoadedAction` to your store.
 
 ### State Setup
 
@@ -75,7 +75,7 @@ var store = new Store<AppState>(
 );
 
 // Load state to store
-persistor.load(store);
+persistor.start(store);
 ```
 
 (the `key` param is used as a key of the save file name.
@@ -85,14 +85,14 @@ an instance of your state class, see the above example)
 ### Load
 
 In your reducer, you must add a check for the
-`LoadAction` action (with the generic type), like so:
+`LoadedAction` action (with the generic type), like so:
 
 ```dart
 class IncrementCounterAction {}
 
 AppState reducer(state, action) {
   // !!!
-  if (action is LoadAction<AppState>) {
+  if (action is LoadedAction<AppState>) {
     return action.state ?? state; // Use existing state if null
   }
   // !!!
@@ -106,6 +106,13 @@ AppState reducer(state, action) {
   }
 }
 ```
+
+### Optional Actions
+
+You can also use the `LoadAction` or `PersistorErrorAction` to follow the lifecycle of the persistor.
+
+* `LoadAction` is dispatched when the store is being loaded
+* `PersistorErrorAction` is dispatched when an error occurs on loading/saving
 
 ## Storage Engines
 
@@ -195,6 +202,19 @@ persistor = new Persistor<AppState>(
       (json) => decrypt(json),
     ],
   )
+);
+```
+
+## Debug
+
+`Persistor` has a `debug` option, which will eventually log debug information.
+
+Use it like so:
+
+```dart
+persistor = new Persistor<AppState>(
+  // ...
+  debug: true
 );
 ```
 

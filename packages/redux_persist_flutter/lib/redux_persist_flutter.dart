@@ -1,7 +1,6 @@
 library redux_persist;
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
@@ -17,7 +16,7 @@ class FlutterStorage implements StorageEngine {
   final String key;
   StorageEngine locationEngine;
 
-  FlutterStorage(this.key, {location = FlutterSaveLocation.sharedPreference}) {
+  FlutterStorage(this.key, {FlutterSaveLocation location = FlutterSaveLocation.sharedPreference}) {
     switch (location) {
       case FlutterSaveLocation.sharedPreference:
         locationEngine = new SharedPreferenceEngine(this.key);
@@ -47,8 +46,7 @@ class DocumentFileEngine implements StorageEngine {
 
     if (await file.exists()) {
       // Read to json
-      final string = await file.readAsString();
-      return JSON.decode(string);
+      return await file.readAsString();
     }
     return null;
   }
@@ -110,7 +108,7 @@ class PersistorGateState extends State<PersistorGate> {
 
     // Listen for loads
     widget.persistor.loadStream.listen(
-      (_) {
+      (void _) {
         if (!_loaded) {
           setState(() {
             _loaded = true;

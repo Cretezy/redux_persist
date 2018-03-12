@@ -30,7 +30,7 @@ class IncrementCounterAction {}
 
 AppState reducer(state, action) {
   // Load to state
-  if (action is LoadAction<AppState>) {
+  if (action is LoadedAction<AppState>) {
     return action.state ?? state;
   }
 
@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
     );
 
     // Load state and dispatch LoadAction
-    persistor.load(store);
+    persistor.start(store);
   }
 
   @override
