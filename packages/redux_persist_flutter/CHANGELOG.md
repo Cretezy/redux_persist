@@ -1,3 +1,11 @@
+## [0.4.5] - 2018-03-13
+
+* Update load listener from `loadStream.listen` to Future.
+
+## [0.4.4] - 2018-03-12
+
+* Update `redux_persist` dependency.
+
 ## [0.4.3] - 2018-03-12
 
 * Fix load bug (loaded JSON instead of string)

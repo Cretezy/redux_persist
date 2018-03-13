@@ -20,7 +20,7 @@ class AppState {
   }
 
   static AppState fromJson(dynamic json) {
-    return new AppState(counter: json["counter"]);
+    return new AppState(counter: json["counter"] as int);
   }
 
   Map toJson() => {'counter': counter};
@@ -28,7 +28,7 @@ class AppState {
 
 class IncrementCounterAction {}
 
-AppState reducer(state, action) {
+AppState reducer(AppState state, Object action) {
   // Load to state
   if (action is LoadedAction<AppState>) {
     return action.state ?? state;
@@ -45,8 +45,8 @@ AppState reducer(state, action) {
 
 // App
 class MyApp extends StatelessWidget {
-  var persistor;
-  var store;
+  Persistor<AppState> persistor;
+  Store<AppState> store;
 
   MyApp() {
     // Create Persistor

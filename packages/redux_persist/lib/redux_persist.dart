@@ -36,12 +36,12 @@ class Persistor<T> {
   final Transforms<T> transforms;
   final RawTransforms rawTransforms;
 
-  final StreamController<void> loadStreamController =
-      new StreamController.broadcast();
+  final StreamController<T> loadStreamController =
+      new StreamController<T>.broadcast();
 
-  final bool debug;
+  bool debug;
 
-  var loaded = false;
+  bool _loaded = false;
 
   Persistor({
     this.storage,
@@ -73,8 +73,14 @@ class Persistor<T> {
     };
   }
 
-  void start(Store<T> store) {
+  Future<T> start(Store<T> store) {
+    // Start stream to listen to next loaded state
+    final Future<T> next = loadStream.first;
+
+    // Dispatch load action (to load state)
     store.dispatch(new LoadAction<T>());
+
+    return next;
   }
 
   /// Load state from disk and dispatch LoadAction to [store]
@@ -97,8 +103,8 @@ class Persistor<T> {
     }
 
     // Emit
-    loadStreamController.add(true);
-    loaded = true;
+    _loaded = true;
+    loadStreamController.add(state);
 
     return state;
   }
@@ -122,7 +128,9 @@ class Persistor<T> {
     await storage.save(json);
   }
 
-  Stream get loadStream => loadStreamController.stream;
+  Stream<T> get loadStream => loadStreamController.stream;
+
+  bool get loaded => _loaded;
 }
 
 /// Transforms state (without mutating)

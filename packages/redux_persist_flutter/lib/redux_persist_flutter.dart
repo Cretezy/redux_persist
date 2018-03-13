@@ -12,11 +12,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum FlutterSaveLocation { documentFile, sharedPreference }
 
 /// Storage engine to use with Flutter
+/// (proxy of SharedPreferenceEngine and DocumentFileEngine)
 class FlutterStorage implements StorageEngine {
   final String key;
   StorageEngine locationEngine;
 
-  FlutterStorage(this.key, {FlutterSaveLocation location = FlutterSaveLocation.sharedPreference}) {
+  FlutterStorage(this.key,
+      {FlutterSaveLocation location = FlutterSaveLocation.sharedPreference}) {
     switch (location) {
       case FlutterSaveLocation.sharedPreference:
         locationEngine = new SharedPreferenceEngine(this.key);
@@ -84,7 +86,7 @@ class SharedPreferenceEngine implements StorageEngine {
   }
 }
 
-/// PersistorGate waits until state is loaded to render the child
+/// PersistorGate waits until state is loaded to render the child [builder]
 class PersistorGate extends StatefulWidget {
   final Persistor persistor;
   final WidgetBuilder builder;
@@ -107,8 +109,9 @@ class PersistorGateState extends State<PersistorGate> {
     _loaded = widget.persistor.loaded;
 
     // Listen for loads
-    widget.persistor.loadStream.listen(
-      (void _) {
+    widget.persistor.loadStream.first.then(
+      (dynamic _) {
+        // Set as loaded if not already loaded
         if (!_loaded) {
           setState(() {
             _loaded = true;

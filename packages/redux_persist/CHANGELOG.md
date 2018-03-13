@@ -1,3 +1,8 @@
+## [0.5.1] - 2018-03-13
+
+* Made `persistor.start` return a Future.
+* Add type to `persistor.loadStream`.
+
 ## [0.5.0] - 2018-03-12
 
 Breaking changes:
