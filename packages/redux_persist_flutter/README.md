@@ -6,13 +6,6 @@ Can either save to [`shared_preferences`](https://pub.dartlang.org/packages/shar
 (default, recommended), or your
 [application document directory](https://pub.dartlang.org/packages/path_provider).
 
-Defaults to saving to
-[`shared_preferences`](https://pub.dartlang.org/packages/shared_preferences)
-(recommended).
-
-To save to a file in your
-[application document directory](https://pub.dartlang.org/packages/path_provider),
-simply change the `location`:
 
 ## Usage
 

@@ -1,8 +1,6 @@
 # redux_persist [![pub package](https://img.shields.io/pub/v/redux_persist.svg)](https://pub.dartlang.org/packages/redux_persist)
 
-Persist Redux state across app restarts in Flutter or custom storage engines.
-
-[Article](https://medium.com/@cretezy/persist-redux-in-flutter-a2082bbb9aa0).
+Persist [Redux](https://pub.dartlang.org/packages/redux) state across app restarts in Flutter, Web, or custom storage engines.
 
 Features:
 
