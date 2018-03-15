@@ -1,4 +1,4 @@
-library redux_persist_flutter;
+library redux_persist;
 
 import 'dart:async';
 import 'dart:convert';
@@ -83,30 +83,30 @@ class Persistor<T> {
     return next;
   }
 
-  /// Load state from disk and dispatch LoadAction to [store]
+  /// Load state from disk and dispatch LoadAction to store
   Future<T> load() async {
-    var json = await storage.load();
-    T state;
+    var loadedJson = await storage.load();
+    T loadedState;
 
-    if (json != null) {
+    if (loadedJson != null) {
       rawTransforms?.onLoad?.forEach((transform) {
         // Run all raw load transforms
-        json = transform(json);
+        loadedJson = transform(loadedJson);
       });
 
-      state = decoder(JSON.decode(json));
+      loadedState = decoder(json.decode(loadedJson));
 
       transforms?.onLoad?.forEach((transform) {
         // Run all load transforms
-        state = transform(state);
+        loadedState = transform(loadedState);
       });
     }
 
     // Emit
     _loaded = true;
-    loadStreamController.add(state);
+    loadStreamController.add(loadedState);
 
-    return state;
+    return loadedState;
   }
 
   /// Save [state] to disk
@@ -118,14 +118,14 @@ class Persistor<T> {
       transformedState = transform(transformedState);
     });
 
-    var json = JSON.encode(transformedState);
+    var transformedJson = json.encode(transformedState);
 
     rawTransforms?.onSave?.forEach((transform) {
       // Run all raw save transforms
-      json = transform(json);
+      transformedJson = transform(transformedJson);
     });
 
-    await storage.save(json);
+    await storage.save(transformedJson);
   }
 
   Stream<T> get loadStream => loadStreamController.stream;

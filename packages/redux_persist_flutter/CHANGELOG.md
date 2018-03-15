@@ -1,3 +1,7 @@
+## [0.4.6] - 2018-03-14
+
+* Fix library export.
+
 ## [0.4.5] - 2018-03-13
 
 * Update load listener from `loadStream.listen` to Future.

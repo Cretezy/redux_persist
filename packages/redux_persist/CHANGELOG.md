@@ -1,3 +1,12 @@
+# [0.5.3] - Unreleased
+
+* Fix JSON deprecation warning.
+* Add tests
+
+## [0.5.2] - 2018-03-14
+
+* Fix library export.
+
 ## [0.5.1] - 2018-03-13
 
 * Made `persistor.start` return a Future.

@@ -7,3 +7,4 @@ ios
 .flutter-plugins
 pubspec.lock
 doc/api/
+.dart_tool

@@ -1,3 +1,5 @@
+library redux_persist_web;
+
 import 'dart:async';
 import 'dart:html';
 

@@ -1,4 +1,4 @@
-library redux_persist;
+library redux_persist_flutter;
 
 import 'dart:async';
 import 'dart:io';

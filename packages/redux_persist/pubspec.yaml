@@ -1,6 +1,6 @@
 name: redux_persist
 description: Persist Redux State
-version: 0.5.1
+version: 0.5.2
 homepage: https://github.com/Cretezy/redux_persist/tree/master/packages/redux_persist
 author: Charles Crete <charles@cretezy.com>
 
@@ -10,3 +10,5 @@ environment:
 dependencies:
   redux: ^2.1.1
 
+dev_dependencies:
+  test: "^0.12.32+1"
