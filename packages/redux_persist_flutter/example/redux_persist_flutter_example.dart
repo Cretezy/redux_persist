@@ -23,24 +23,21 @@ class AppState {
     return new AppState(counter: json["counter"] as int);
   }
 
-  Map toJson() => {'counter': counter};
+  dynamic toJson() => {'counter': counter};
 }
 
 class IncrementCounterAction {}
 
 AppState reducer(AppState state, Object action) {
-  // Load to state
   if (action is LoadedAction<AppState>) {
+    // Load to state
     return action.state ?? state;
+  } else if (action is IncrementCounterAction) {
+    // Increment
+    return state.copyWith(counter: state.counter + 1);
   }
 
-  switch (action.runtimeType) {
-    case IncrementCounterAction:
-      return state.copyWith(counter: state.counter + 1);
-    default:
-      // No change
-      return state;
-  }
+  return state;
 }
 
 // App

@@ -1,7 +1,13 @@
-# [0.5.3] - Unreleased
+# [0.6.0] - 2018-03-18
 
+Breaking changes:
+
+* Change saved state format. This will break your saved state, will only happen once.
+* Added migrations and version key.
 * Fix JSON deprecation warning.
-* Add tests
+* Added tests.
+* Added exceptions.
+* Added FileStorage.
 
 ## [0.5.2] - 2018-03-14
 
@@ -15,6 +21,7 @@
 ## [0.5.0] - 2018-03-12
 
 Breaking changes:
+
 * Change `persistor.load(store)` to `persistor.start(store)` for initial loading.
 * Change `LoadAction<T>` to `LoadedAction<T>`.
 * Add `LoadAction` (action dispatch to start loading).

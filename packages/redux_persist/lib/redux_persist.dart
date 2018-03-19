@@ -5,33 +5,31 @@ import 'dart:convert';
 
 import 'package:redux/redux.dart';
 
-// Interface for storage engines
-abstract class StorageEngine {
-  external Future<void> save(String json);
+import 'src/exceptions.dart';
+import 'src/transforms.dart';
+import 'src/actions.dart';
+import 'src/storage.dart';
 
-  external Future<String> load();
-}
+export 'src/storage.dart' show StorageEngine, FileStorage;
+export 'src/actions.dart' show LoadAction, LoadedAction, PersistorErrorAction;
+export 'src/transforms.dart'
+    show Transformer, Transforms, RawTransformer, RawTransforms, Migration;
+export 'src/exceptions.dart'
+    show
+        InvalidVersionException,
+        TransformationException,
+        StorageException,
+        SerializationException;
 
 /// Decoder of state from [json] to <T>
 typedef T Decoder<T>(dynamic json);
-
-/// Action being dispatched when done loading the state from disk.
-class LoadedAction<T> {
-  final T state;
-
-  LoadedAction(this.state);
-}
-
-/// Action being dispatched to load the state from disk.
-class LoadAction<T> {}
-
-/// Action being dispatched when error loading/saving to disk
-class PersistorErrorAction {}
 
 /// Persistor class that saves/loads to/from disk.
 class Persistor<T> {
   final StorageEngine storage;
   final Decoder<T> decoder;
+  final int version;
+  final Map<int, Migration> migrations;
 
   final Transforms<T> transforms;
   final RawTransforms rawTransforms;
@@ -46,6 +44,8 @@ class Persistor<T> {
   Persistor({
     this.storage,
     this.decoder,
+    this.version = -1,
+    this.migrations,
     this.transforms,
     this.rawTransforms,
     this.debug = false,
@@ -68,12 +68,15 @@ class Persistor<T> {
           }
         } catch (error) {
           store.dispatch(new PersistorErrorAction());
+          throw error;
         }
       }
     };
   }
 
   Future<T> start(Store<T> store) {
+    printDebug("Starting");
+
     // Start stream to listen to next loaded state
     final Future<T> next = loadStream.first;
 
@@ -85,23 +88,83 @@ class Persistor<T> {
 
   /// Load state from disk and dispatch LoadAction to store
   Future<T> load() async {
-    var loadedJson = await storage.load();
-    T loadedState;
-
-    if (loadedJson != null) {
-      rawTransforms?.onLoad?.forEach((transform) {
-        // Run all raw load transforms
-        loadedJson = transform(loadedJson);
-      });
-
-      loadedState = decoder(json.decode(loadedJson));
-
-      transforms?.onLoad?.forEach((transform) {
-        // Run all load transforms
-        loadedState = transform(loadedState);
-      });
+    printDebug("Starting loading");
+    // Load from storage
+    String loadedJson;
+    try {
+      loadedJson = await storage.load();
+    } catch (error) {
+      throw new StorageException("load: ${error.toString()}");
     }
 
+    T loadedState;
+
+    if (loadedJson != null && loadedJson.isNotEmpty) {
+      try {
+        // Run all raw load transforms
+        rawTransforms?.onLoad?.forEach((transform) {
+          loadedJson = transform(loadedJson);
+        });
+      } catch (error) {
+        throw new TransformationException(
+            "Load raw transformation: ${error.toString()}");
+      }
+
+      dynamic versionedState;
+      try {
+        versionedState = json.decode(loadedJson);
+      } catch (error) {
+        throw new SerializationException("Load: ${error.toString()}");
+      }
+
+      // TODO: check if savedVersion is really an int
+
+      // Extract versioned variables
+      int savedVersion = versionedState["version"];
+      dynamic savedState = versionedState["state"];
+
+      if (savedVersion > version) {
+        // The version saved is higher than the current version, something is wrong
+        throw new InvalidVersionException(
+            "Version '$savedVersion' is higher than current version '$version'.");
+      }
+
+      final knownVersions = migrations?.keys ?? new List<int>();
+      while (savedVersion < version) {
+        // Get next possible version (lowest migration that is higher than saved)
+        final nextVersions = knownVersions
+            .where((version) => version > savedVersion)
+            .toList()
+              ..sort();
+        final nextVersion = nextVersions.first;
+
+        if (nextVersion == null) {
+          // No more migrations to be done, can't reach current version
+          throw new InvalidVersionException(
+              "No more migrations after version '$savedVersion'");
+        }
+
+        // Run migration
+        savedState = migrations[nextVersion](savedState);
+        savedVersion = nextVersion;
+      }
+
+      // Decode
+      // TODO: add custom serializer
+      loadedState = decoder(savedState);
+
+      try {
+        // Run all load transforms
+        transforms?.onLoad?.forEach((transform) {
+          loadedState = transform(loadedState);
+        });
+      } catch (error) {
+        throw new TransformationException(
+            "Load transformation: ${error.toString()}");
+      }
+    }
+
+    printDebug("Done loading");
     // Emit
     _loaded = true;
     loadStreamController.add(loadedState);
@@ -111,46 +174,59 @@ class Persistor<T> {
 
   /// Save [state] to disk
   Future<void> save(T state) async {
-    // Avoid replacing initial state
-    var transformedState = state;
-    transforms?.onSave?.forEach((transform) {
-      // Run all save transforms
-      transformedState = transform(transformedState);
-    });
+    printDebug("Start saving");
 
-    var transformedJson = json.encode(transformedState);
+    // Run all save transforms
+    try {
+      transforms?.onSave?.forEach((transform) {
+        state = transform(state);
+      });
+    } catch (error) {
+      throw new TransformationException(
+          "Save transformation: ${error.toString()}");
+    }
 
-    rawTransforms?.onSave?.forEach((transform) {
+    // Create a versioned state
+    final versionedState = {
+      "version": version,
+      "state": state,
+    };
+
+    // Encode to JSON
+    // TODO: add custom serializer
+    String transformedJson;
+
+    try {
+      transformedJson = json.encode(versionedState);
+    } catch (error) {
+      throw new SerializationException("Save: ${error.toString()}");
+    }
+
+    try {
       // Run all raw save transforms
-      transformedJson = transform(transformedJson);
-    });
+      rawTransforms?.onSave?.forEach((transform) {
+        transformedJson = transform(transformedJson);
+      });
+    } catch (error) {
+      throw new TransformationException(
+          "Save raw transformation: ${error.toString()}");
+    }
 
-    await storage.save(transformedJson);
+    // Save to storage
+    try {
+      await storage.save(transformedJson);
+    } catch (error) {
+      throw new StorageException("Save: ${error.toString()}");
+    }
+
+    printDebug("Done saving");
   }
 
   Stream<T> get loadStream => loadStreamController.stream;
 
   bool get loaded => _loaded;
-}
 
-/// Transforms state (without mutating)
-typedef T Transformer<T>(final T state);
-
-/// Holds onSave and onLoad transformations.
-class Transforms<T> {
-  final List<Transformer<T>> onSave;
-  final List<Transformer<T>> onLoad;
-
-  Transforms({this.onSave, this.onLoad});
-}
-
-/// Transforms JSON state
-typedef String RawTransformer(final String json);
-
-/// Holds onSave and onLoad raw transformations.
-class RawTransforms {
-  final List<RawTransformer> onSave;
-  final List<RawTransformer> onLoad;
-
-  RawTransforms({this.onSave, this.onLoad});
+  void printDebug(Object object) {
+    if (debug) print("Persistor debug: $object");
+  }
 }

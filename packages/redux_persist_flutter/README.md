@@ -10,22 +10,10 @@ Can either save to [`shared_preferences`](https://pub.dartlang.org/packages/shar
 ## Usage
 
 ```dart
-var persistor = new Persistor<AppState>(
+var persistor = new Persistor<State>(
   // ...
   storage: new FlutterStorage("my-app"),
 );
-```
-
-## Locations
-
-By default, it saves to `FlutterSaveLocation.sharedPreference`
-([`shared_preferences`](https://pub.dartlang.org/packages/shared_preferences), recommended).
-
-You can also save to your [application document directory](https://pub.dartlang.org/packages/path_provider)
-by using `FlutterSaveLocation.documentFile`:
-
-```dart
-new FlutterStorage("my-app", location: FlutterSaveLocation.documentFile)
 ```
 
 ## `PersistorGate`
@@ -52,6 +40,18 @@ new PersistorGate(
   loading: SlashScreen(), // !!!
   builder: (context) => MyApp(),
 );
+```
+
+## Locations
+
+By default, it saves to `FlutterSaveLocation.sharedPreference`
+([`shared_preferences`](https://pub.dartlang.org/packages/shared_preferences), recommended).
+
+You can also save to your [application document directory](https://pub.dartlang.org/packages/path_provider)
+by using `FlutterSaveLocation.documentFile`:
+
+```dart
+new FlutterStorage("my-app", location: FlutterSaveLocation.documentFile)
 ```
 
 ## Features and bugs

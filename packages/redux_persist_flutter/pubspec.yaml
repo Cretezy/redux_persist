@@ -1,6 +1,6 @@
 name: redux_persist_flutter
 description: Redux Persist Flutter Integration
-version: 0.4.6
+version: 0.5.0
 homepage: https://github.com/Cretezy/redux_persist/tree/master/packages/redux_persist_flutter
 author: Charles Crete <charles@cretezy.com>
 
@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
   path_provider: ^0.3.1
   shared_preferences: ^0.4.0
-  redux_persist: ^0.5.0
+  redux_persist: ^0.6.0
 
 dev_dependencies:
   # for example

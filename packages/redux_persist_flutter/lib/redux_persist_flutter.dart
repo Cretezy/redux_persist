@@ -9,7 +9,7 @@ import 'package:redux_persist/redux_persist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Location to save state when using Flutter
-enum FlutterSaveLocation { documentFile, sharedPreference }
+enum FlutterSaveLocation { documentFile, sharedPreferences }
 
 /// Storage engine to use with Flutter
 /// (proxy of SharedPreferenceEngine and DocumentFileEngine)
@@ -18,10 +18,10 @@ class FlutterStorage implements StorageEngine {
   StorageEngine locationEngine;
 
   FlutterStorage(this.key,
-      {FlutterSaveLocation location = FlutterSaveLocation.sharedPreference}) {
+      {FlutterSaveLocation location = FlutterSaveLocation.sharedPreferences}) {
     switch (location) {
-      case FlutterSaveLocation.sharedPreference:
-        locationEngine = new SharedPreferenceEngine(this.key);
+      case FlutterSaveLocation.sharedPreferences:
+        locationEngine = new SharedPreferencesEngine(this.key);
         break;
       case FlutterSaveLocation.documentFile:
         locationEngine = new DocumentFileEngine(this.key);
@@ -68,10 +68,10 @@ class DocumentFileEngine implements StorageEngine {
 }
 
 /// Storage engine to save to NSUserDefaults/SharedPreferences (recommended)
-class SharedPreferenceEngine implements StorageEngine {
+class SharedPreferencesEngine implements StorageEngine {
   final String key;
 
-  SharedPreferenceEngine(this.key);
+  SharedPreferencesEngine(this.key);
 
   @override
   load() async {

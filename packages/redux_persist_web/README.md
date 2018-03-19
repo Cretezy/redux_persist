@@ -7,7 +7,7 @@ Saves to `localStorage`.
 ## Usage
 
 ```dart
-var persistor = new Persistor<AppState>(
+final persistor = new Persistor<AppState>(
   // ...
   storage: new WebStorage("my-app"),
 );

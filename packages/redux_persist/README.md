@@ -14,7 +14,7 @@ Storage Engines:
 
 * [Flutter](https://pub.dartlang.org/packages/redux_persist_flutter)
 * [Web](https://pub.dartlang.org/packages/redux_persist_web)
-* Custom (see below)
+* File and custom (see below)
 
 ## Usage
 
@@ -114,20 +114,29 @@ You can also use the `LoadAction` or `PersistorErrorAction` to follow the lifecy
 
 ## Storage Engines
 
-You can use the [Flutter](https://pub.dartlang.org/packages/redux_persist_flutter)
-or [Web](https://pub.dartlang.org/packages/redux_persist_web) engines,
-or build your own custom storage engine.
+You can use different storage engines for different application types:
 
-To create a custom engine, you will need to implement the following interface
-to save/load a JSON string to disk:
+* [Flutter](https://pub.dartlang.org/packages/redux_persist_flutter)
+* [Web](https://pub.dartlang.org/packages/redux_persist_web)
+* `FileStorage`
+  ```dart
+  final persistor = new Persistor<AppState>(
+    // ...
+    storage: new FileStorage("path/to/state.json"),
+  );
+  ```
+* Build your own custom storage engine:
 
-```dart
-abstract class StorageEngine {
-  external Future<void> save(String json);
+  To create a custom engine, you will need to implement the following interface
+  to save/load a JSON string to disk:
 
-  external Future<String> load();
-}
-```
+  ```dart
+  abstract class StorageEngine {
+    external Future<void> save(String json);
+
+    external Future<String> load();
+  }
+  ```
 
 ## Whitelist/Blacklist
 
@@ -155,6 +164,30 @@ class AppState {
 }
 ```
 
+## Migrations
+
+As your state grows, you will need new state versions.
+You can version you state and apply migrations between state versions.
+
+Versions are integers, starting at `0`.
+You may use any integer as long as it is higher than the last version number.
+
+Migrations are pure functions taking in a `dynamic` state,
+and returning a transformed state (do not modify the original state passed).
+
+```dart
+final persistor = new Persistor<State>(
+  // ...
+  version: 1,
+  migrations: {
+    // Renamed fields from "oldCounter" to "counter"
+    0: (dynamic state) => {"counter": state["oldCounter"]},
+    // "counter" is now a string
+    1: (dynamic state) => {"counter": state["counter"].toString()                                                                       }
+  },
+);
+```
+
 ## Transforms
 
 All transformers are ran in order, from first to last.
@@ -163,7 +196,7 @@ Make sure all transformation are pure. Do not modify the original state passed.
 
 ### State
 
-State transformations transform your *state*
+State transformations transform your _state_
 before it's written to disk (on save) or loaded from disk (on load).
 
 ```dart

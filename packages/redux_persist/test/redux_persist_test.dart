@@ -9,12 +9,12 @@ void main() {
   test("loads on start", () async {
     TestStorage storage = new TestStorage();
 
-    Persistor persistor = new Persistor<State>(
+    final persistor = new Persistor<State>(
       storage: storage,
       decoder: State.fromJson,
     );
 
-    Store store = new Store<State>(
+    final store = new Store<State>(
       reducer,
       initialState: new State(),
       middleware: [persistor.createMiddleware()],
@@ -28,12 +28,12 @@ void main() {
   test("saves on changes", () async {
     TestStorage storage = new TestStorage();
 
-    Persistor persistor = new Persistor<State>(
+    final persistor = new Persistor<State>(
       storage: storage,
       decoder: State.fromJson,
     );
 
-    Store store = new Store<State>(
+    final store = new Store<State>(
       reducer,
       initialState: new State(),
       middleware: [persistor.createMiddleware()],
@@ -41,13 +41,16 @@ void main() {
 
     store.dispatch(new SetCounterAction(5));
 
-    await expect(storage.saveStream, emits(json.encode(store.state.toJson())));
+    await expect(
+      storage.saveStream,
+      emits(json.encode({"version": -1, "state": store.state})),
+    );
   });
 
   test("dispatches actions on load(ed)", () async {
     TestStorage storage = new TestStorage();
 
-    Persistor persistor = new Persistor<State>(
+    final persistor = new Persistor<State>(
       storage: storage,
       decoder: State.fromJson,
     );
@@ -55,7 +58,7 @@ void main() {
     StreamController<String> actionsStreamController =
         new StreamController<String>.broadcast();
 
-    State testReducer(State state, dynamic action) {
+    State testReducer(State state, Object action) {
       if (action is LoadAction<State>) {
         actionsStreamController.add("load");
       } else if (action is LoadedAction<State>) {
@@ -64,7 +67,7 @@ void main() {
       return state;
     }
 
-    Store store = new Store<State>(
+    final store = new Store<State>(
       testReducer,
       initialState: new State(),
       middleware: [persistor.createMiddleware()],
@@ -73,10 +76,60 @@ void main() {
     await Future.wait<void>([
       expectLater(
         actionsStreamController.stream,
-        emitsInOrder(["load", "loaded"]),
+        emitsInOrder(["load", "loaded"].toList()),
       ),
       persistor.start(store)
     ]);
+  });
+
+  test("migrate to new version", () async {
+    TestStorage storage = new TestStorage();
+
+    final persistor = new Persistor<State>(
+      storage: storage,
+      decoder: State.fromJson,
+      version: 1,
+      migrations: {
+        0: (dynamic state) => {"counter": 5},
+        1: (dynamic state) => {"counter": (state["counter"] as int) + 1}
+      },
+    );
+
+    final store = new Store<State>(
+      reducer,
+      initialState: new State(),
+      middleware: [persistor.createMiddleware()],
+    );
+
+    final state = await persistor.start(store);
+
+    expect(state.counter, 6);
+  });
+
+  test("loads and migrate to old version", () async {
+    // Make only the version 1 migration happen
+    TestStorage storage =
+        new TestStorage('{ "version": 0, "state": { "counter": 0 } }');
+
+    final persistor = new Persistor<State>(
+      storage: storage,
+      decoder: State.fromJson,
+      version: 1,
+      migrations: {
+        0: (dynamic state) => {"counter": 5},
+        1: (dynamic state) => {"counter": (state["counter"] as int) + 1}
+      },
+    );
+
+    final store = new Store<State>(
+      reducer,
+      initialState: new State(),
+      middleware: [persistor.createMiddleware()],
+    );
+
+    final state = await persistor.start(store);
+
+    expect(state.counter, 1);
   });
 }
 
@@ -89,7 +142,7 @@ class TestStorage extends StorageEngine {
   final StreamController<String> _loadStreamControllers =
       new StreamController<String>.broadcast();
 
-  TestStorage([this.disk = '{ "counter": 0 }']);
+  TestStorage([this.disk = '{ "version": -1, "state": { "counter": 0 } }']);
 
   Stream<String> get saveStream => _saveStreamControllers.stream;
 
@@ -119,7 +172,7 @@ class State {
     return new State(counter: json["counter"] as int);
   }
 
-  Map<String, int> toJson() => {'counter': counter};
+  dynamic toJson() => {'counter': counter};
 }
 
 class SetCounterAction {

@@ -1,3 +1,11 @@
+## [0.5.0] - 2018-03-18
+
+Breaking:
+
+* Fix typo `sharedPreference` to `sharedPreferences`
+  (and `SharedPreferenceEngine` to `SharedPreferencesEngine`).
+  You will need to rename if you are using it explicitly.
+
 ## [0.4.6] - 2018-03-14
 
 * Fix library export.
