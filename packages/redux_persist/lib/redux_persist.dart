@@ -10,7 +10,7 @@ import 'src/transforms.dart';
 import 'src/actions.dart';
 import 'src/storage.dart';
 
-export 'src/storage.dart' show StorageEngine, FileStorage;
+export 'src/storage.dart' show StorageEngine, FileStorage, MemoryStorage;
 export 'src/actions.dart' show LoadAction, LoadedAction, PersistorErrorAction;
 export 'src/transforms.dart'
     show Transformer, Transforms, RawTransformer, RawTransforms, Migration;

@@ -1,3 +1,7 @@
+# [0.6.1] - WIP
+
+* Add `MemoryStorage`.
+
 # [0.6.0] - 2018-03-18
 
 Breaking changes:
@@ -7,7 +11,7 @@ Breaking changes:
 * Fix JSON deprecation warning.
 * Added tests.
 * Added exceptions.
-* Added FileStorage.
+* Added `FileStorage`.
 
 ## [0.5.2] - 2018-03-14
 
@@ -15,7 +19,7 @@ Breaking changes:
 
 ## [0.5.1] - 2018-03-13
 
-* Made `persistor.start` return a Future.
+* Made `persistor.start` return a `Future`.
 * Add type to `persistor.loadStream`.
 
 ## [0.5.0] - 2018-03-12
@@ -39,16 +43,16 @@ Breaking changes:
 ## [0.2.0] - 2018-03-10
 
 * Move Flutter-specific code to separate, unexported file.
-  It is likely this will become it's own pacakge.
-* Add SaveLocation for Flutter storage engine.
-* Add SharedPreference sub-engine for Flutter storage engine (make default).
-* Fix PersistorGate passing variables to state and initialization.
+  It is likely this will become it's own package.
+* Add `SaveLocation` for Flutter storage engine.
+* Add `SharedPreference` sub-engine for Flutter storage engine (make default).
+* Fix `PersistorGate `passing variables to state and initialization.
 * Add more docs.
 
 ## [0.1.0] - 2018-03-09
 
-* Create generic StorageEngine.
-* Create FlutterStorage.
+* Create generic `StorageEngine`.
+* Create `FlutterStorage`.
 
 ## [0.0.3] - 2018-03-09
 
@@ -56,7 +60,7 @@ Breaking changes:
 
 ## [0.0.2] - 2018-03-09
 
-* Added Persistor Gate.
+* Added `PersistorGate`.
 
 ## [0.0.1] - 2018-03-09
 

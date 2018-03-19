@@ -36,3 +36,17 @@ class FileStorage implements StorageEngine {
     return new File(path);
   }
 }
+
+/// Storage engine to save to memory.
+/// Do not use in production, this doesn't persist to disk
+class MemoryStorage implements StorageEngine {
+  String memory;
+
+  MemoryStorage(this.memory);
+
+  @override
+  load() async => memory;
+
+  @override
+  save(String json) async => memory = json;
+}
