@@ -1,8 +1,11 @@
+## [0.6.0] - WIP
+
+* Breaking: Revert back to `DocumentFileEngine` as default.
+* Refactor.
+
 ## [0.5.0] - 2018-03-18
 
-Breaking:
-
-* Fix typo `sharedPreference` to `sharedPreferences`
+* Breaking: Fix typo `sharedPreference` to `sharedPreferences`
   (and `SharedPreferenceEngine` to `SharedPreferencesEngine`).
   You will need to rename if you are using it explicitly.
 

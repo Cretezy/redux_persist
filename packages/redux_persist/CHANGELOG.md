@@ -1,12 +1,12 @@
 # [0.6.1] - WIP
 
 * Add `MemoryStorage`.
+* Refactor, new test.
 
 # [0.6.0] - 2018-03-18
 
-Breaking changes:
-
-* Change saved state format. This will break your saved state, will only happen once.
+* Breaking: Change saved state format.
+  This will break your saved state, will only happen once.
 * Added migrations and version key.
 * Fix JSON deprecation warning.
 * Added tests.
@@ -24,21 +24,21 @@ Breaking changes:
 
 ## [0.5.0] - 2018-03-12
 
-Breaking changes:
-
-* Change `persistor.load(store)` to `persistor.start(store)` for initial loading.
-* Change `LoadAction<T>` to `LoadedAction<T>`.
+* Breaking: Change `persistor.load(store)` to
+  `persistor.start(store)` for initial loading.
+* Breaking: Change `LoadAction<T>` to `LoadedAction<T>`.
 * Add `LoadAction` (action dispatch to start loading).
 * Add `PersistorErrorAction` (action dispatched on save/load error).
 * Add `debug` persistor option, doesn't do anything yet.
 
 ## [0.4.0] - 2018-03-10
 
-* Decouple Flutter and Web into different packages.
+* Breaking: Decouple Flutter and Web into different packages.
 
 ## [0.3.0] - 2018-03-10
 
 * Add state and raw transformers.
+* Added better error handling (`persistor.errorStream`)
 
 ## [0.2.0] - 2018-03-10
 

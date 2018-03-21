@@ -5,8 +5,9 @@ import 'dart:html';
 
 import 'package:redux_persist/redux_persist.dart';
 
-/// Storage engine to use with Web
+/// Storage engine to use with Web.
 class WebStorage implements StorageEngine {
+  /// localStorage key to save to.
   final String key;
 
   WebStorage(this.key);

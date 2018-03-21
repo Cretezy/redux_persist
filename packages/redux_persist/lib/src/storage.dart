@@ -1,15 +1,18 @@
 import 'dart:async';
 import 'dart:io';
 
-// Interface for storage engines
+/// Interface for storage engines
 abstract class StorageEngine {
+  /// Save state to disk as string
   external Future<void> save(String json);
 
+  /// Load state from disk as string
   external Future<String> load();
 }
 
-/// Storage engine to save to file
+/// Storage engine to save to file.
 class FileStorage implements StorageEngine {
+  /// Path to save to.
   final String path;
 
   FileStorage(this.path);
@@ -32,21 +35,20 @@ class FileStorage implements StorageEngine {
     await file.writeAsString(json);
   }
 
-  Future<File> _getFile() async {
-    return new File(path);
-  }
+  Future<File> _getFile() async => new File(path);
 }
 
 /// Storage engine to save to memory.
-/// Do not use in production, this doesn't persist to disk
+/// Do not use in production, this doesn't persist to disk.
 class MemoryStorage implements StorageEngine {
-  String memory;
+  /// Internal memory.
+  String _memory;
 
-  MemoryStorage(this.memory);
-
-  @override
-  load() async => memory;
+  MemoryStorage(String memory) : _memory = memory;
 
   @override
-  save(String json) async => memory = json;
+  load() async => _memory;
+
+  @override
+  save(String json) async => _memory = json;
 }

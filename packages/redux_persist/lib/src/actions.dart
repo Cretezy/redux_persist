@@ -1,5 +1,6 @@
 /// Action being dispatched when done loading the state from disk.
 class LoadedAction<T> {
+  /// Loaded state.
   final T state;
 
   LoadedAction(this.state);
@@ -8,5 +9,5 @@ class LoadedAction<T> {
 /// Action being dispatched to load the state from disk.
 class LoadAction<T> {}
 
-/// Action being dispatched when error loading/saving to disk
+/// Action being dispatched when error loading/saving to disk.
 class PersistorErrorAction {}

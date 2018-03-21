@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:redux/redux.dart';
 import 'package:redux_persist/redux_persist.dart';
-import "package:test/test.dart";
+import 'package:test/test.dart';
 
 void main() {
   test("loads on start", () async {
@@ -22,7 +22,7 @@ void main() {
 
     persistor.start(store);
 
-    await expect(storage.loadStream, emits(storage.disk));
+    expectLater(storage.loadStream, emits(storage.disk));
   });
 
   test("saves on changes", () async {
@@ -39,11 +39,14 @@ void main() {
       middleware: [persistor.createMiddleware()],
     );
 
+    await persistor.start(store);
+
     store.dispatch(new SetCounterAction(5));
 
-    await expect(
-      storage.saveStream,
-      emits(json.encode({"version": -1, "state": store.state})),
+    expectLater(
+      storage.saveStream.skip(1), // Skip the start
+      emits((String expected) =>
+          expected == json.encode({"version": -1, "state": store.state})),
     );
   });
 
@@ -73,13 +76,12 @@ void main() {
       middleware: [persistor.createMiddleware()],
     );
 
-    await Future.wait<void>([
-      expectLater(
-        actionsStreamController.stream,
-        emitsInOrder(["load", "loaded"].toList()),
-      ),
-      persistor.start(store)
-    ]);
+    expectLater(
+      actionsStreamController.stream,
+      emitsInOrder(["load", "loaded"].toList()),
+    );
+
+    persistor.start(store);
   });
 
   test("migrate to new version", () async {
@@ -130,6 +132,28 @@ void main() {
     final state = await persistor.start(store);
 
     expect(state.counter, 1);
+  });
+
+  test("throws on bad json", () async {
+    // Load bad JSON
+    TestStorage storage = new TestStorage('this is not json');
+
+    final persistor = new Persistor<State>(
+      storage: storage,
+      decoder: State.fromJson,
+    );
+    final store = new Store<State>(
+      reducer,
+      initialState: new State(),
+      middleware: [persistor.createMiddleware()],
+    );
+
+    expectLater(
+      persistor.errorStream,
+      emits((dynamic error) => error is SerializationException),
+    );
+
+    persistor.start(store);
   });
 }
 

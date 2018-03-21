@@ -11,4 +11,4 @@ linter:
     - list_remove_unrelated_type
     - unrelated_type_equality_checks
     - valid_regexps
-  
+

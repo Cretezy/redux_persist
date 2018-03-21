@@ -249,6 +249,11 @@ persistor = new Persistor<AppState>(
 );
 ```
 
+### Errors
+
+Middleware errors (save/load) are broadcasted to `persistor.errorStream`,
+and printed to console when `debug` is set to `true`.
+
 ## Features and bugs
 
 Please file feature requests and bugs at the

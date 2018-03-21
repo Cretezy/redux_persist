@@ -9,18 +9,13 @@ environment:
 
 dependencies:
   flutter:
-    sdk: flutter
-  path_provider: ^0.3.1
-  shared_preferences: ^0.4.0
-  redux_persist: ^0.6.0
+    sdk: "flutter"
+  path_provider: "^0.3.1"
+  shared_preferences: "^0.4.0"
+  redux_persist: "^0.6.0"
+  sqflite: "^0.8.3"
 
 dev_dependencies:
-  # for example
-  redux: ^2.1.1
-  flutter_redux: ^0.3.5
-  redux_persist:
-    path: ../redux_persist
+  redux: "^2.1.1"
+  flutter_redux: "^0.3.5"
 
-dependency_overrides:
-  redux_persist:
-    path: ../redux_persist
