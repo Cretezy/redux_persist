@@ -33,19 +33,14 @@ class AppState {
 
   AppState({this.counter = 0});
 
-  AppState copyWith({int counter}) {
-    return new AppState(counter: counter ?? this.counter);
-  }
+  AppState copyWith({int counter}) =>
+      AppState(counter: counter ?? this.counter);
 
   // !!!
-  static AppState fromJson(dynamic json) {
-    return new AppState(counter: json["counter"]);
-  }
+  static AppState fromJson(dynamic json) => AppState(counter: json["counter"]);
 
   // !!!
-  Map toJson() => {
-    'counter': counter
-  };
+  dynamic toJson() => {'counter': counter};
 }
 ```
 
@@ -60,15 +55,15 @@ This will usually be in your `main` or in your root widget:
 
 ```dart
 // Create Persistor
-var persistor = new Persistor<AppState>(
-  storage: new FlutterStorage("my-app"), // Or use other engines
+final persistor = Persistor<AppState>(
+  storage: FlutterStorage("my-app"), // Or use other engines
   decoder: AppState.fromJson,
 );
 
 // Create Store with Persistor middleware
-var store = new Store<AppState>(
+final store = Store<AppState>(
   reducer,
-  initialState: new AppState(),
+  initialState: AppState(),
   middleware: [persistor.createMiddleware()],
 );
 
@@ -82,35 +77,30 @@ an instance of your state class, see the above example)
 
 ### Load
 
-In your reducer, you must add a check for the
-`LoadedAction` action (with the generic type), like so:
+In your reducer, you must add a handler for the
+`PersistLoadedAction` action (with the generic type), like so:
 
 ```dart
 class IncrementCounterAction {}
 
 AppState reducer(state, action) {
   // !!!
-  if (action is LoadedAction<AppState>) {
+  if (action is PersistLoadedAction<AppState>) {
     return action.state ?? state; // Use existing state if null
+  }else if (action is IncrementCounterAction) {
+    return state.copyWith(counter: state.counter + 1);
   }
-  // !!!
 
-  switch (action.runtimeType) {
-    case IncrementCounterAction:
-      return state.copyWith(counter: state.counter + 1);
-    default:
-      // No change
-      return state;
-  }
+  return state;
 }
 ```
 
 ### Optional Actions
 
-You can also use the `LoadAction` or `PersistorErrorAction` to follow the lifecycle of the persistor.
+The persistor dispatches a few other actions based on it's lifecycle:
 
-* `LoadAction` is dispatched when the store is being loaded
-* `PersistorErrorAction` is dispatched when an error occurs on loading/saving
+* `PersistLoadAction` is dispatched when the store is being loaded
+* `PersistErrorAction` is dispatched when an error occurs on loading/saving
 
 ## Storage Engines
 
@@ -118,17 +108,19 @@ You can use different storage engines for different application types:
 
 * [Flutter](https://pub.dartlang.org/packages/redux_persist_flutter)
 * [Web](https://pub.dartlang.org/packages/redux_persist_web)
-* `FileStorage`
+* `FileStorage`:
+
   ```dart
-  final persistor = new Persistor<AppState>(
+  final persistor = Persistor<AppState>(
     // ...
-    storage: new FileStorage("path/to/state.json"),
+    storage: FileStorage("path/to/state.json"),
   );
   ```
+
 * Build your own custom storage engine:
 
-  To create a custom engine, you will need to implement the following interface
-  to save/load a JSON string to disk:
+  To create a custom engine, you will need to implement the following [interface](https://github.com/Cretezy/redux_persist/blob/master/packages/redux_persist/lib/src/storage.dart#L5)
+  to save/load a string to disk:
 
   ```dart
   abstract class StorageEngine {
@@ -156,9 +148,9 @@ class AppState {
 
   // ...
 
-  static AppState fromJson(dynamic json) {
-    return new AppState(name: json["name"]); // Don't load counter, will use default of 0
-  }
+  static AppState fromJson(dynamic json) =>
+      AppState(name: json["name"]); // Don't load counter, will use default of 0
+
 
   Map toJson() => {'name': name}; // Don't save counter
 }
@@ -176,7 +168,7 @@ Migrations are pure functions taking in a `dynamic` state,
 and returning a transformed state (do not modify the original state passed).
 
 ```dart
-final persistor = new Persistor<State>(
+final persistor = Persistor<State>(
   // ...
   version: 1,
   migrations: {
@@ -200,9 +192,9 @@ State transformations transform your _state_
 before it's written to disk (on save) or loaded from disk (on load).
 
 ```dart
-persistor = new Persistor<AppState>(
+final persistor = Persistor<AppState>(
   // ...
-  transforms: new Transforms(
+  transforms: Transforms(
     onSave: [
       // Set counter to 3 when writing to disk
       (state) => state.copyWith(counter: 3),
@@ -221,9 +213,9 @@ Raw transformation are applied to the raw text (JSON)
 before it's written to disk (on save) or loaded from disk (on load).
 
 ```dart
-persistor = new Persistor<AppState>(
+final persistor = Persistor<AppState>(
   // ...
-  rawTransforms: new RawTransforms(
+  rawTransforms: RawTransforms(
     onSave: [
       // Encrypt raw json
       (json) => encrypt(json),
@@ -238,12 +230,12 @@ persistor = new Persistor<AppState>(
 
 ## Debug
 
-`Persistor` has a `debug` option, which will eventually log debug information.
+`Persistor` has a `debug` option, which will eventually log more debug information.
 
 Use it like so:
 
 ```dart
-persistor = new Persistor<AppState>(
+final persistor = Persistor<AppState>(
   // ...
   debug: true
 );
@@ -251,8 +243,8 @@ persistor = new Persistor<AppState>(
 
 ### Errors
 
-Middleware errors (save/load) are broadcasted to `persistor.errorStream`,
-and printed to console when `debug` is set to `true`.
+Middleware errors (save/load) are dispatched as `PersistErrorAction`
+and broadcasted to `persistor.errorStream`(alongside `debug`).
 
 ## Features and bugs
 

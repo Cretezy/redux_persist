@@ -35,7 +35,7 @@ class FileStorage implements StorageEngine {
     await file.writeAsString(json);
   }
 
-  Future<File> _getFile() async => new File(path);
+  Future<File> _getFile() async => File(path);
 }
 
 /// Storage engine to save to memory.

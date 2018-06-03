@@ -1,9 +1,25 @@
-# [0.6.1] - WIP
+# `0.7.0-rc.2` - 2018-04-09
 
-* Add `MemoryStorage`.
-* Refactor, new test.
+* Fix middleware typing.
 
-# [0.6.0] - 2018-03-18
+# `0.7.0-rc.1` - 2018-03-31
+
+* Breaking: Dart 2.
+* Breaking: Upgraded `redux` to v3.0.0.
+* Breaking: Changed loading flow:
+  * `persistor.start` has been deprecated (will be removed in next major version).
+    Use `persistor.load`
+  * Loading dispatched `PersistLoadAction`, then `PersistLoadedAction` once completed.
+* Breaking: Changed action names:
+  * `LoadAction`: `PersistLoadingAction`
+  * `LoadedAction`: `PersistLoadedAction`
+  * `PersistorErrorAction`: `PersistErrorAction`
+* Added saving actions (`PersistSavingAction` and `PersistSavedAction`)
+* Added `MemoryStorage`.
+* Added `loadFromStorage` and `saveToStorage` for more manual control.
+* Refactor, new tests.
+
+# `0.6.0` - 2018-03-18
 
 * Breaking: Change saved state format.
   This will break your saved state, will only happen once.
@@ -13,16 +29,16 @@
 * Added exceptions.
 * Added `FileStorage`.
 
-## [0.5.2] - 2018-03-14
+## `0.5.2` - 2018-03-14
 
 * Fix library export.
 
-## [0.5.1] - 2018-03-13
+## `0.5.1` - 2018-03-13
 
 * Made `persistor.start` return a `Future`.
 * Add type to `persistor.loadStream`.
 
-## [0.5.0] - 2018-03-12
+## `0.5.0` - 2018-03-12
 
 * Breaking: Change `persistor.load(store)` to
   `persistor.start(store)` for initial loading.
@@ -31,37 +47,37 @@
 * Add `PersistorErrorAction` (action dispatched on save/load error).
 * Add `debug` persistor option, doesn't do anything yet.
 
-## [0.4.0] - 2018-03-10
+## `0.4.0` - 2018-03-10
 
 * Breaking: Decouple Flutter and Web into different packages.
 
-## [0.3.0] - 2018-03-10
+## `0.3.0` - 2018-03-10
 
 * Add state and raw transformers.
 * Added better error handling (`persistor.errorStream`)
 
-## [0.2.0] - 2018-03-10
+## `0.2.0` - 2018-03-10
 
 * Move Flutter-specific code to separate, unexported file.
   It is likely this will become it's own package.
 * Add `SaveLocation` for Flutter storage engine.
 * Add `SharedPreference` sub-engine for Flutter storage engine (make default).
-* Fix `PersistorGate `passing variables to state and initialization.
+* Fix `PersistorGate`passing variables to state and initialization.
 * Add more docs.
 
-## [0.1.0] - 2018-03-09
+## `0.1.0` - 2018-03-09
 
 * Create generic `StorageEngine`.
 * Create `FlutterStorage`.
 
-## [0.0.3] - 2018-03-09
+## `0.0.3` - 2018-03-09
 
 * Added documentation.
 
-## [0.0.2] - 2018-03-09
+## `0.0.2` - 2018-03-09
 
 * Added `PersistorGate`.
 
-## [0.0.1] - 2018-03-09
+## `0.0.1` - 2018-03-09
 
 * Initial release.

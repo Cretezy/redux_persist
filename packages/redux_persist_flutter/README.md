@@ -6,13 +6,12 @@ Can either save to [`shared_preferences`](https://pub.dartlang.org/packages/shar
 (default, recommended), or your
 [application document directory](https://pub.dartlang.org/packages/path_provider).
 
-
 ## Usage
 
 ```dart
-var persistor = new Persistor<State>(
+final persistor = Persistor<State>(
   // ...
-  storage: new FlutterStorage("my-app"),
+  storage: FlutterStorage("my-app"),
 );
 ```
 
@@ -24,7 +23,7 @@ use the `PersistorGate`:
 ```dart
 @override
 Widget build(BuildContext context) {
-  return new PersistorGate(
+  return PersistorGate(
     persistor: persistor,
     builder: (context) => MyApp(),
   );
@@ -35,7 +34,7 @@ If you want to display a loading/slash screen while loading,
 pass a widget to render to the `loading` param of `PersistorGate`:
 
 ```dart
-new PersistorGate(
+PersistorGate(
   persistor: persistor,
   loading: SlashScreen(), // !!!
   builder: (context) => MyApp(),
@@ -44,14 +43,14 @@ new PersistorGate(
 
 ## Locations
 
-By default, it saves to `FlutterSaveLocation.sharedPreference`
-([`shared_preferences`](https://pub.dartlang.org/packages/shared_preferences), recommended).
+By default, it saves to `FlutterSaveLocation.documentFile`
+([application document directory](https://pub.dartlang.org/packages/path_provider), recommended).
 
-You can also save to your [application document directory](https://pub.dartlang.org/packages/path_provider)
-by using `FlutterSaveLocation.documentFile`:
+You can also save to your [shared preferences](https://pub.dartlang.org/packages/shared_preferences) by using `FlutterSaveLocation.sharedPreferences`:
 
 ```dart
-new FlutterStorage("my-app", location: FlutterSaveLocation.documentFile)
+// Use shared preferences
+FlutterStorage("my-app", location: FlutterSaveLocation.sharedPreferences)
 ```
 
 ## Features and bugs

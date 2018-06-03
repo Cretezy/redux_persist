@@ -10,7 +10,14 @@ import 'src/exceptions.dart';
 import 'src/storage.dart';
 import 'src/transforms.dart';
 
-export 'src/actions.dart' show LoadAction, LoadedAction, PersistorErrorAction;
+export 'src/actions.dart'
+    show
+        PersistLoadingAction,
+        PersistLoadedAction,
+        PersistSavingAction,
+        PersistSavedAction,
+        PersistErrorAction,
+        PersistAction;
 export 'src/exceptions.dart'
     show
         InvalidVersionException,
@@ -68,44 +75,51 @@ class Persistor<T> {
 
   /// Middleware used for Redux which saves on each action.
   Middleware<T> createMiddleware() =>
-      (Store<T> store, dynamic action, NextDispatcher next) async {
+      (Store<T> store, dynamic action, NextDispatcher next) {
         next(action);
 
-        // Don't run load/save on error
-        if (action is! PersistorErrorAction) {
+        if (action is! PersistAction) {
           try {
-            if (action is LoadAction<T>) {
-              // Load and dispatch to state
-              final state = await load();
-              store.dispatch(new LoadedAction<T>(state));
-            } else {
-              // Save
-              await save(store.state as T);
-            }
-          } catch (error) {
-            _printDebug('Errored in middlewared: ${error.toString()}');
-            _errorStreamController.add(error);
-            store.dispatch(new PersistorErrorAction());
-          }
+            // Save
+            save(store);
+          } catch (_) {}
         }
       };
 
-  /// Load initial state from disk.
-  Future<T> start(Store<T> store) {
-    _printDebug('Starting');
+  /// Use `load`.
+  @deprecated
+  Future<T> start(Store<T> store) => load(store);
 
-    // Start stream to listen to next loaded state
-    final Future<T> next = loadStream.first;
+  /// Load state.
+  Future<T> load(Store<T> store) async {
+    try {
+      _printDebug('Starting loading');
 
-    // Dispatch load action (to load state)
-    store.dispatch(new LoadAction<T>());
+      store.dispatch(PersistLoadingAction());
 
-    return next;
+      T state = await loadFromStorage();
+
+      _loaded = true;
+      _loadStreamController.add(state);
+
+      // Dispatch loaded action
+      store.dispatch(PersistLoadedAction(state));
+
+      _printDebug('Done loading');
+
+      return state;
+    } catch (error) {
+      _printDebug('Error in load: ${error.toString()}');
+
+      _errorStreamController.add(error);
+      store.dispatch(PersistErrorAction(error));
+
+      throw error;
+    }
   }
 
-  /// Load state from disk and dispatch LoadAction to store.
-  Future<T> load() async {
-    _printDebug('Starting loading');
+  /// Load state from storage. Use `load`.
+  Future<T> loadFromStorage() async {
     // Load from storage
     String loadedJson;
     try {
@@ -182,19 +196,35 @@ class Persistor<T> {
       }
     }
 
-    _printDebug('Done loading');
-
-    // Emit
-    _loaded = true;
-    _loadStreamController.add(loadedState);
-
     return loadedState;
   }
 
-  /// Save [state] to disk.
-  Future<void> save(T state) async {
-    _printDebug('Start saving');
+  /// Save state.
+  Future<void> save(Store<T> store) async {
+    try {
+      _printDebug('Start saving');
 
+      // Dispatch saving action
+      store.dispatch(PersistSavingAction());
+
+      await saveToStorage(store.state);
+
+      // Dispatch saved action
+      store.dispatch(PersistSavedAction());
+
+      _printDebug('Done saving');
+    } catch (error) {
+      _printDebug('Error in save: ${error.toString()}');
+
+      _errorStreamController.add(error);
+      store.dispatch(PersistErrorAction(error));
+
+      throw error;
+    }
+  }
+
+  /// Save state to storage. Use `save`.
+  Future<void> saveToStorage(T state) async {
     // Run all save transforms
     try {
       transforms?.onSave?.forEach((transform) {
@@ -237,8 +267,6 @@ class Persistor<T> {
     } catch (error) {
       throw new StorageException('Save: ${error.toString()}');
     }
-
-    _printDebug('Done saving');
   }
 
   /// Stream of states after a load.

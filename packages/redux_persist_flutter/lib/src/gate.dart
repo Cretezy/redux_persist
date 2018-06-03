@@ -16,13 +16,13 @@ class PersistorGate extends StatefulWidget {
     this.persistor,
     this.builder,
     Widget loading,
-  }) : this.loading = loading ?? new Container(width: 0.0, height: 0.0);
+  }) : this.loading = loading ?? Container(width: 0.0, height: 0.0);
 
   @override
-  State<PersistorGate> createState() => new PersistorGateState();
+  State<PersistorGate> createState() => _PersistorGateState();
 }
 
-class PersistorGateState extends State<PersistorGate> {
+class _PersistorGateState extends State<PersistorGate> {
   bool _loaded;
 
   @override
