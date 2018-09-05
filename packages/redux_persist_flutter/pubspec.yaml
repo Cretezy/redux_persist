@@ -5,7 +5,7 @@ homepage: https://github.com/Cretezy/redux_persist/tree/master/packages/redux_pe
 author: Charles Crete <charles@cretezy.com>
 
 environment:
-  sdk: ">=2.0.0-dev <2.0.0"
+  sdk: ">=2.0.0-dev <2.2.0"
 
 dependencies:
   flutter:
