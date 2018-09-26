@@ -8,3 +8,4 @@ ios
 pubspec.lock
 doc/api/
 .dart_tool
+/packages/redux_persist_flutter/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
