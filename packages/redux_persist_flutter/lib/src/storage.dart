@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:synchronized/synchronized.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:redux_persist/redux_persist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +19,7 @@ enum FlutterSaveLocation {
 /// Proxy of SharedPreferenceEngine and DocumentFileEngine.
 class FlutterStorage implements StorageEngine {
   StorageEngine locationEngine;
+  final saveLock = Lock();
 
   FlutterStorage(String key,
       {FlutterSaveLocation location = FlutterSaveLocation.documentFile}) {
@@ -35,7 +37,7 @@ class FlutterStorage implements StorageEngine {
   load() => locationEngine.load();
 
   @override
-  save(String json) => locationEngine.save(json);
+  save(String json) => saveLock.synchronized(() => locationEngine.save(json));
 }
 
 /// Storage engine to save to application document directory.
