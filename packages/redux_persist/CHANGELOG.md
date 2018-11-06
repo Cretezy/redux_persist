@@ -1,5 +1,9 @@
 ## `0.8.0-rc.0` - 2018-11-06
 
+* Fix serializers failing on `null` state.
+
+## `0.8.0-rc.0` - 2018-11-06
+
 * Breaking: Removed migrations
 * Breaking: Change saving/loading
 * Breaking: Introduced serializers

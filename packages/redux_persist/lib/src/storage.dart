@@ -4,10 +4,10 @@ import 'dart:typed_data';
 
 /// Interface for storage engines
 abstract class StorageEngine {
-  /// Save state
+  /// Save state ([data] could be null)
   external Future<void> save(Uint8List data);
 
-  /// Load state
+  /// Load state (can return null)
   external Future<Uint8List> load();
 }
 
@@ -29,7 +29,7 @@ class FileStorage implements StorageEngine {
 
   @override
   Future<void> save(Uint8List data) async {
-    await file.writeAsBytes(data);
+    await file.writeAsBytes(data ?? Uint8List(0));
   }
 }
 

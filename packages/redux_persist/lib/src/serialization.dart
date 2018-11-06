@@ -9,17 +9,22 @@ abstract class StateSerializer<T> {
 }
 
 class JsonSerializer<T> implements StateSerializer<T> {
+  /// Turns the dynamic [json] (can be null) to [T]
   final T Function(dynamic json) decoder;
 
   JsonSerializer(this.decoder);
 
   @override
   T decode(Uint8List data) {
-    return decoder(json.decode(uint8ListToString(data)));
+    return decoder(data != null ? json.decode(uint8ListToString(data)) : null);
   }
 
   @override
   Uint8List encode(T state) {
+    if (state == null) {
+      return null;
+    }
+
     return stringToUint8List(json.encode(state));
   }
 }
@@ -49,9 +54,17 @@ class RawSerializer implements StateSerializer<Uint8List> {
 // String helpers
 
 Uint8List stringToUint8List(String data) {
+  if (data == null) {
+    return null;
+  }
+
   return Uint8List.fromList(utf8.encode(data));
 }
 
 String uint8ListToString(Uint8List data) {
+  if (data == null) {
+    return null;
+  }
+
   return utf8.decode(data);
 }

@@ -32,4 +32,10 @@ void main() {
 
     expect(serializer.decode(await storage.load()), equals(state));
   });
+
+  test("json serializes empty state", () async {
+    final serializer = JsonSerializer<Object>((dynamic data) => data);
+
+    expect(serializer.decode(null), equals(null));
+  });
 }
