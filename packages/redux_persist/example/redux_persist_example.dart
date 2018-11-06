@@ -1,20 +1,22 @@
+import 'dart:io';
+
 import 'package:redux/redux.dart';
 import 'package:redux_persist/redux_persist.dart';
 
 void main() async {
   final persistor = Persistor<State>(
-    storage: FileStorage("state.json"),
-    decoder: State.fromJson,
-  );
-
-  final store = Store<State>(
-    reducer,
-    initialState: State(),
-    middleware: [persistor.createMiddleware()],
+    storage: FileStorage(File("state.json")),
+    serializer: JsonSerializer<State>(State.fromJson),
   );
 
   // Load initial state
-  await persistor.load(store);
+  final initialState = await persistor.load();
+
+  final store = Store<State>(
+    reducer,
+    initialState: initialState ?? State(),
+    middleware: [persistor.createMiddleware()],
+  );
 
   // ...
 }
@@ -34,10 +36,7 @@ class State {
 class IncrementCounterAction {}
 
 State reducer(State state, Object action) {
-  if (action is PersistLoadedAction<State>) {
-    // Load to state
-    return action.state ?? state;
-  } else if (action is IncrementCounterAction) {
+  if (action is IncrementCounterAction) {
     // Increment
     return state.copyWith(counter: state.counter + 1);
   }

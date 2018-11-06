@@ -1,8 +1,19 @@
-# `0.7.0-rc.2` - 2018-04-09
+## `0.8.0-rc.0` - 2018-11-06
+
+* Breaking: Removed migrations
+* Breaking: Change saving/loading
+* Breaking: Introduced serializers
+* Adding throttle
+* Added should save (https://github.com/Cretezy/redux_persist/issues/20)
+* Added save lock (https://github.com/Cretezy/redux_persist/issues/25)
+
+## `0.7.0` - 2018-08-10
+
+## `0.7.0-rc.2` - 2018-04-09
 
 * Fix middleware typing.
 
-# `0.7.0-rc.1` - 2018-03-31
+## `0.7.0-rc.1` - 2018-03-31
 
 * Breaking: Dart 2.
 * Breaking: Upgraded `redux` to v3.0.0.
@@ -19,7 +30,7 @@
 * Added `loadFromStorage` and `saveToStorage` for more manual control.
 * Refactor, new tests.
 
-# `0.6.0` - 2018-03-18
+## `0.6.0` - 2018-03-18
 
 * Breaking: Change saved state format.
   This will break your saved state, will only happen once.

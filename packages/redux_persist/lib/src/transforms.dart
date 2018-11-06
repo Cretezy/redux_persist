@@ -1,4 +1,8 @@
-/// Transforms state (immutable).
+import 'dart:typed_data';
+
+/// Transforms state to new state.
+/// Do not mutate original state.
+/// Could be ran with null state.
 typedef T Transformer<T>(T state);
 
 /// Holds onSave and onLoad transformations.
@@ -12,8 +16,10 @@ class Transforms<T> {
   Transforms({this.onSave, this.onLoad});
 }
 
-/// Transforms JSON state (immutable).
-typedef String RawTransformer(String json);
+/// Transforms byte state data (immutable).
+/// Do not mutate original data.
+/// Could be ran with null or empty data.
+typedef Uint8List RawTransformer(Uint8List data);
 
 /// Holds onSave and onLoad raw transformations.
 class RawTransforms {
@@ -25,6 +31,3 @@ class RawTransforms {
 
   RawTransforms({this.onSave, this.onLoad});
 }
-
-/// State migrations (immutable).
-typedef dynamic Migration(dynamic state);

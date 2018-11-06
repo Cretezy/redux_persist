@@ -5,7 +5,26 @@ import 'package:redux/redux.dart';
 import 'package:redux_persist/redux_persist.dart';
 import 'package:redux_persist_flutter/redux_persist_flutter.dart';
 
-void main() => runApp(App());
+void main() async {
+  // Create Persistor
+  final persistor = Persistor<AppState>(
+    storage: FlutterStorage(),
+    serializer: JsonSerializer<AppState>(AppState.fromJson),
+  );
+
+  // Load initial state
+  final initialState = await persistor.load();
+
+  final store = Store<AppState>(
+    reducer,
+    initialState: initialState ?? AppState(),
+    middleware: [persistor.createMiddleware()],
+  );
+
+  runApp(App(
+    store: store,
+  ));
+}
 
 // Redux
 class AppState {
@@ -25,10 +44,7 @@ class AppState {
 class IncrementCounterAction {}
 
 AppState reducer(AppState state, Object action) {
-  if (action is PersistLoadedAction<AppState>) {
-    // Load to state
-    return action.state ?? state;
-  } else if (action is IncrementCounterAction) {
+  if (action is IncrementCounterAction) {
     // Increment
     return state.copyWith(counter: state.counter + 1);
   }
@@ -38,35 +54,16 @@ AppState reducer(AppState state, Object action) {
 
 // App
 class App extends StatelessWidget {
-  Persistor<AppState> persistor;
-  Store<AppState> store;
+  final Store<AppState> store;
 
-  App() {
-    // Create Persistor
-    persistor = Persistor<AppState>(
-      storage: FlutterStorage("my-app"),
-      decoder: AppState.fromJson,
-    );
-
-    store = Store<AppState>(
-      reducer,
-      initialState: AppState(),
-      middleware: [persistor.createMiddleware()],
-    );
-
-    // Load initial state
-    persistor.load(store);
-  }
+  const App({Key key, this.store}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // PersistorGaOuu te waits for state to be loaded before rendering
-    return PersistorGate(
-      persistor: persistor,
-      builder: (context) => StoreProvider(
-            store: store,
-            child: MaterialApp(title: 'Redux Persist Demo', home: HomePage()),
-          ),
+    return StoreProvider(
+      store: store,
+      child: MaterialApp(title: 'Redux Persist Demo', home: HomePage()),
     );
   }
 }

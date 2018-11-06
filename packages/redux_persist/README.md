@@ -4,10 +4,10 @@ Persist [Redux](https://pub.dartlang.org/packages/redux) state across app restar
 
 Features:
 
-* Save and load from multiple engine (Flutter, Web, custom)
+* Save and load from multiple engine (Flutter, Web, File, custom)
 * Fully type safe
 * Transform state and raw on load/save
-* Flutter integration (`PersistorGate`)
+* Custom serializers
 * Easy to use, integrate into your codebase in a few minutes!
 
 Storage Engines:
@@ -21,11 +21,10 @@ Storage Engines:
 See [Flutter example](https://github.com/Cretezy/redux_persist/tree/master/packages/redux_persist_flutter/example) for a full overview.
 
 The library creates a middleware that saves on every action.
-It also loads on initial load and sets a `LoadedAction` to your store.
 
 ### State Setup
 
-You will need to use a state class, with a required `toJson` method, as such:
+We will be using the `JsonSerializer`, you will need to use a state class, with a required `toJson` method, as such:
 
 ```dart
 class AppState {
@@ -54,53 +53,28 @@ and store, then load the last state in.
 This will usually be in your `main` or in your root widget:
 
 ```dart
-// Create Persistor
-final persistor = Persistor<AppState>(
-  storage: FlutterStorage("my-app"), // Or use other engines
-  decoder: AppState.fromJson,
-);
-
-// Create Store with Persistor middleware
-final store = Store<AppState>(
-  reducer,
-  initialState: AppState(),
-  middleware: [persistor.createMiddleware()],
-);
-
-// Load state to store
-persistor.start(store);
-```
-
-(the `key` param is used as a key of the save file name.
-The `decoder` param takes in a `dynamic` type and outputs
-an instance of your state class, see the above example)
-
-### Load
-
-In your reducer, you must add a handler for the
-`PersistLoadedAction` action (with the generic type), like so:
-
-```dart
-class IncrementCounterAction {}
-
-AppState reducer(state, action) {
-  // !!!
-  if (action is PersistLoadedAction<AppState>) {
-    return action.state ?? state; // Use existing state if null
-  }else if (action is IncrementCounterAction) {
-    return state.copyWith(counter: state.counter + 1);
-  }
-
-  return state;
+void main() async {
+  // Create Persistor
+  final persistor = Persistor<AppState>(
+    storage: FileStorage(File("state.json")), // Or use other engines
+    serializer: JsonSerializer<AppState>(AppState.fromJson), // Or use other serializers
+  );
+  
+  // Load initial state
+  final initialState = await persistor.load();
+  
+  // Create Store with Persistor middleware
+  final store = Store<AppState>(
+    reducer,
+    initialState: initialState ?? AppState(),
+    middleware: [persistor.createMiddleware()],
+  );
+  
+  // ..
 }
 ```
 
-### Optional Actions
-
-The persistor dispatches a few other actions based on it's lifecycle:
-
-* `PersistLoadAction` is dispatched when the store is being loaded
-* `PersistErrorAction` is dispatched when an error occurs on loading/saving
+(`JsonSerializer` takes a single param which turns the JSON into your `AppState`. Your state will automatically be saved using the middleware)
 
 ## Storage Engines
 
@@ -113,20 +87,60 @@ You can use different storage engines for different application types:
   ```dart
   final persistor = Persistor<AppState>(
     // ...
-    storage: FileStorage("path/to/state.json"),
+    storage: FileStorage(File("path/to/state")),
   );
   ```
 
 * Build your own custom storage engine:
 
-  To create a custom engine, you will need to implement the following [interface](https://github.com/Cretezy/redux_persist/blob/master/packages/redux_persist/lib/src/storage.dart#L5)
+  To create a custom engine, you will need to implement the following [interface](https://github.com/Cretezy/redux_persist/blob/master/packages/redux_persist/lib/src/storage.dart#L6)
   to save/load a string to disk:
 
   ```dart
   abstract class StorageEngine {
-    external Future<void> save(String json);
+    external Future<void> save(Uint8List data);
 
-    external Future<String> load();
+    external Future<Uint8List> load();
+  }
+  ```
+  
+## Serializers
+
+You can use one of the [built in serializers](./lib/src/serialization.dart) such as:
+
+* `JsonSerializer`
+* `StringSerializer`
+* `RawSerializer`
+
+* Build your own serializer:
+
+  To create a custom engine, you will need to implement the following [interface](https://github.com/Cretezy/redux_persist/blob/master/packages/redux_persist/lib/src/serialization.dart#L5)
+  to encode/decode state to/from `Uint8List`:
+
+  ```dart
+  abstract class StateSerializer<T> {
+    external Uint8List encode(T state);
+    external T decode(Uint8List data);
+  }
+  ```
+  
+  Example:
+  
+  ```dart
+  class IntSerializer implements StateSerializer<int> {
+    /// Takes [data] and converts it to a [int]
+    @override
+    int decode(Uint8List data) {
+      return ByteData.view(data.buffer).getInt64(0);
+    }
+      
+    /// Takes [state] and converts it to a [Uint8List]
+    @override
+    Uint8List encode(int state) {
+      final data = Uint8List(8);
+      ByteData.view(data.buffer).setInt64(0, state);
+      return data;
+    }
   }
   ```
 
@@ -134,7 +148,9 @@ You can use different storage engines for different application types:
 
 To only save parts of your state,
 simply omit the fields that you wish to not save
-from your `toJson` and decoder (usually `fromJson`) methods.
+from your serializer.
+
+If using the `JsonSerializer`, you can omit them from you `toJson` and decoder.
 
 For instance, if we have a state with `counter` and `name`,
 but we don't want `counter` to be saved, you would do:
@@ -156,35 +172,13 @@ class AppState {
 }
 ```
 
-## Migrations
-
-As your state grows, you will need new state versions.
-You can version you state and apply migrations between state versions.
-
-Versions are integers, starting at `0`.
-You may use any integer as long as it is higher than the last version number.
-
-Migrations are pure functions taking in a `dynamic` state,
-and returning a transformed state (do not modify the original state passed).
-
-```dart
-final persistor = Persistor<State>(
-  // ...
-  version: 1,
-  migrations: {
-    // Renamed fields from "oldCounter" to "counter"
-    0: (dynamic state) => {"counter": state["oldCounter"]},
-    // "counter" is now a string
-    1: (dynamic state) => {"counter": state["counter"].toString()                                                                       }
-  },
-);
-```
-
 ## Transforms
+
+Transformations are a way to transform ("edit") your state when loading/saving. They are 2 types:
 
 All transformers are ran in order, from first to last.
 
-Make sure all transformation are pure. Do not modify the original state passed.
+Make sure all transformation are pure. Do not mutate the original state passed.
 
 ### State
 
@@ -196,11 +190,11 @@ final persistor = Persistor<AppState>(
   // ...
   transforms: Transforms(
     onSave: [
-      // Set counter to 3 when writing to disk
+      // Example: set counter to 3 when writing to disk
       (state) => state.copyWith(counter: 3),
     ],
     onLoad: [
-      // Set counter to 0 when loading from disk
+      // Example: set counter to 0 when loading from disk
       (state) => state.copyWith(counter: 0),
     ],
   ),
@@ -209,20 +203,20 @@ final persistor = Persistor<AppState>(
 
 ### Raw
 
-Raw transformation are applied to the raw text (JSON)
-before it's written to disk (on save) or loaded from disk (on load).
+Raw transformation are applied to the raw byte (`Uint8List`)
+before it's saved/loaded.
 
 ```dart
 final persistor = Persistor<AppState>(
   // ...
   rawTransforms: RawTransforms(
     onSave: [
-      // Encrypt raw json
-      (json) => encrypt(json),
+      // Example: encrypt raw data
+      (data) => encrypt(data),
     ],
     onLoad: [
-      // Decrypt raw json
-      (json) => decrypt(json),
+      // Example: decrypt raw data
+      (data) => decrypt(data),
     ],
   )
 );
@@ -241,10 +235,33 @@ final persistor = Persistor<AppState>(
 );
 ```
 
-### Errors
+## Debug
 
-Middleware errors (save/load) are dispatched as `PersistErrorAction`
-and broadcasted to `persistor.errorStream`(alongside `debug`).
+`Persistor` has a `debug` option, which logs debug information.
+
+Use it like so:
+
+```dart
+final persistor = Persistor<AppState>(
+  // ...
+  debug: true
+);
+```
+
+## Debug
+
+`Persistor` has a `throttleDuration` option, which will throttle saving to disk to prevent excessive
+writing. You should keep this at a low value to prevent data loss (few seconds is recommended).
+
+Use it like so:
+
+```dart
+final persistor = Persistor<AppState>(
+  // ...
+  throttleDuration: Duration(seconds: 2),
+);
+```
+
 
 ## Features and bugs
 

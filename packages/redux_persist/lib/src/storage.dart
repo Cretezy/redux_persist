@@ -1,54 +1,49 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 /// Interface for storage engines
 abstract class StorageEngine {
-  /// Save state to disk as string
-  external Future<void> save(String json);
+  /// Save state
+  external Future<void> save(Uint8List data);
 
-  /// Load state from disk as string
-  external Future<String> load();
+  /// Load state
+  external Future<Uint8List> load();
 }
 
 /// Storage engine to save to file.
 class FileStorage implements StorageEngine {
-  /// Path to save to.
-  final String path;
+  /// File to save to.
+  final File file;
 
-  FileStorage(this.path);
+  FileStorage(this.file);
 
   @override
-  load() async {
-    final file = await _getFile();
-
+  Future<Uint8List> load() async {
     if (await file.exists()) {
-      return await file.readAsString();
+      return Uint8List.fromList(await file.readAsBytes());
     }
 
     return null;
   }
 
   @override
-  save(String json) async {
-    final file = await _getFile();
-
-    await file.writeAsString(json);
+  Future<void> save(Uint8List data) async {
+    await file.writeAsBytes(data);
   }
-
-  Future<File> _getFile() async => File(path);
 }
 
 /// Storage engine to save to memory.
 /// Do not use in production, this doesn't persist to disk.
 class MemoryStorage implements StorageEngine {
   /// Internal memory.
-  String _memory;
+  Uint8List _memory;
 
-  MemoryStorage(String memory) : _memory = memory;
-
-  @override
-  load() async => _memory;
+  MemoryStorage([Uint8List memory]) : _memory = memory;
 
   @override
-  save(String json) async => _memory = json;
+  Future<Uint8List> load() async => _memory;
+
+  @override
+  Future<void> save(Uint8List data) async => _memory = data;
 }

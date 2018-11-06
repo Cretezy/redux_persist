@@ -1,12 +1,3 @@
-/// Version is too low/high.
-class InvalidVersionException implements Exception {
-  final String msg;
-
-  const InvalidVersionException(this.msg);
-
-  String toString() => 'VersionException: $msg';
-}
-
 /// Transformation failed.
 class TransformationException implements Exception {
   final String msg;

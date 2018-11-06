@@ -7,11 +7,16 @@ Saves to `localStorage`.
 ## Usage
 
 ```dart
-final persistor = new Persistor<AppState>(
+final persistor = Persistor<AppState>(
   // ...
-  storage: new WebStorage("my-app"),
+  storage: WebStorage(),
 );
 ```
+
+## Key
+
+You can pass a key argument to `WebStorage` to set the key for `localStorage`.
+
 
 ## Features and bugs
 

@@ -1,4 +1,9 @@
-## `0.6.0-rc.1` - WIP
+## `0.8.0-rc.0` - 2018-11-06
+
+* Breaking: Changed required parameter `key` to optional named parameter.
+* Breaking: Remove gate. Load initial state before calling `runApp`.
+
+## `0.6.0` - 2018-08-10
 
 * Breaking: Dart 2.
 * Breaking: Revert back to `DocumentFileEngine` as default.

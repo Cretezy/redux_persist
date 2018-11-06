@@ -11,35 +11,12 @@ Can either save to [`shared_preferences`](https://pub.dartlang.org/packages/shar
 ```dart
 final persistor = Persistor<State>(
   // ...
-  storage: FlutterStorage("my-app"),
+  storage: FlutterStorage(),
 );
 ```
 
-## `PersistorGate`
-
-If you want to wait until rendering you app until the state is loaded,
-use the `PersistorGate`:
-
-```dart
-@override
-Widget build(BuildContext context) {
-  return PersistorGate(
-    persistor: persistor,
-    builder: (context) => MyApp(),
-  );
-}
-```
-
-If you want to display a loading/slash screen while loading,
-pass a widget to render to the `loading` param of `PersistorGate`:
-
-```dart
-PersistorGate(
-  persistor: persistor,
-  loading: SlashScreen(), // !!!
-  builder: (context) => MyApp(),
-);
-```
+It is recommended to load initial state before calling `runApp` to let Flutter
+show the slash screen until we are ready to render.
 
 ## Locations
 
@@ -50,8 +27,15 @@ You can also save to your [shared preferences](https://pub.dartlang.org/packages
 
 ```dart
 // Use shared preferences
-FlutterStorage("my-app", location: FlutterSaveLocation.sharedPreferences)
+FlutterStorage(location: FlutterSaveLocation.sharedPreferences);
+// Use document file
+FlutterStorage(location: FlutterSaveLocation.documentFile);
 ```
+
+## Key
+
+You can pass a `key` argument to `FlutterStorage` to provide a key
+for the file name (document file) or the shared preference key.
 
 ## Features and bugs
 
