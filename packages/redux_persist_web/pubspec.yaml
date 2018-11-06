@@ -1,5 +1,5 @@
 name: redux_persist_web
-description: Redux Persist Web Integration
+description: Redux Persist Web Integration with custom storage engines
 version: 0.8.0-rc.0
 homepage: https://github.com/Cretezy/redux_persist/tree/master/packages/redux_persist_web
 author: Charles Crete <charles@cretezy.com>
