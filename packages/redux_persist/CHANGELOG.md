@@ -1,4 +1,8 @@
-## `0.8.0-rc.0` - 2018-11-06
+## `0.8.0` - 2018-11-27
+
+* Release v0.8.0. Last v0.x release line.
+
+## `0.8.0-rc.1` - 2018-11-06
 
 * Fix serializers failing on `null` state.
 

@@ -1,3 +1,7 @@
+## `0.8.0` - 2018-11-27
+
+* Release v0.8.0. Last v0.x release line.
+
 ## `0.8.0-rc.0` - 2018-11-06
 
 * Breaking: Changed required parameter `key` to optional named parameter.
