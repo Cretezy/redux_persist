@@ -235,20 +235,7 @@ final persistor = Persistor<AppState>(
 );
 ```
 
-## Debug
-
-`Persistor` has a `debug` option, which logs debug information.
-
-Use it like so:
-
-```dart
-final persistor = Persistor<AppState>(
-  // ...
-  debug: true
-);
-```
-
-## Debug
+## Throttle duration
 
 `Persistor` has a `throttleDuration` option, which will throttle saving to disk to prevent excessive
 writing. You should keep this at a low value to prevent data loss (few seconds is recommended).
