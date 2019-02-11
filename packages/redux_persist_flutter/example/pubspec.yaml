@@ -1,0 +1,17 @@
+name: redux_persist_flutter_example
+
+environment:
+  sdk: ">=2.0.0-dev <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: "flutter"
+  redux_persist_flutter:
+    path: ..
+  redux: "^3.0.0"
+  flutter_redux: "^0.5.3"
+
+# Used for development
+#dependency_overrides:
+#  redux_persist:
+#    path: ../redux_persist
