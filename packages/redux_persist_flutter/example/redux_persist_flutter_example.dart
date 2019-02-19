@@ -36,7 +36,7 @@ class AppState {
       AppState(counter: counter ?? this.counter);
 
   static AppState fromJson(dynamic json) =>
-      AppState(counter: json["counter"] as int);
+      AppState(counter: json != null ? (json["counter"] as int) : 0);
 
   dynamic toJson() => {'counter': counter};
 }
