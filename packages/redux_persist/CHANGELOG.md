@@ -1,3 +1,7 @@
+## `0.8.1` - 2019-02-18
+
+* Updated `synchronized` package to `2.0.2+1` ([#37](https://github.com/Cretezy/redux_persist/issues/37))
+
 ## `0.8.0` - 2018-11-27
 
 * Release v0.8.0. Last v0.x release line.
