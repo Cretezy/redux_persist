@@ -1,3 +1,7 @@
+## `0.8.2` - 2019-03-03
+
+* Republishing to fix score (published before `redux_persist` update)
+
 ## `0.8.1` - 2019-03-03
 
 * Add example.
