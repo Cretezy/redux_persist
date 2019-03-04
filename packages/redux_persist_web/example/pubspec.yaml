@@ -1,0 +1,14 @@
+name: redux_persist_web_example
+
+environment:
+  sdk: ">=2.0.0-dev <3.0.0"
+
+dependencies:
+  redux_persist_web:
+    path: ..
+  redux: "^3.0.0"
+
+# Used for development
+#dependency_overrides:
+#  redux_persist:
+#    path: ../redux_persist

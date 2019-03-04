@@ -1,6 +1,6 @@
 name: redux_persist
 description: Persist Redux State with custom storage engines and serializers
-version: 0.8.1
+version: 0.8.2
 homepage: https://github.com/Cretezy/redux_persist/tree/master/packages/redux_persist
 author: Charles Crete <charles@cretezy.com>
 

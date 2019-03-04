@@ -1,6 +1,10 @@
+## `0.8.2` - 2019-03-03
+
+* Use `rethrow` for errors.
+
 ## `0.8.1` - 2019-02-18
 
-* Updated `synchronized` package to `2.0.2+1` ([#37](https://github.com/Cretezy/redux_persist/issues/37))
+* Updated `synchronized` package to `2.0.2+1` ([#37](https://github.com/Cretezy/redux_persist/issues/37)).
 
 ## `0.8.0` - 2018-11-27
 

@@ -128,7 +128,7 @@ class Persistor<T> {
       return state;
     } catch (error) {
       _printDebug('Error while loading: ${error.toString()}');
-      throw error;
+      rethrow;
     }
   }
 
@@ -179,7 +179,7 @@ class Persistor<T> {
       _printDebug('Done saving!');
     } catch (error) {
       _printDebug('Error while saving: ${error.toString()}');
-      throw error;
+      rethrow;
     }
   }
 

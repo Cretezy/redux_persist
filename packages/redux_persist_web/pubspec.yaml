@@ -1,6 +1,6 @@
 name: redux_persist_web
-description: Redux Persist Web Integration with custom storage engines
-version: 0.8.0
+description: Redux Persist Web Integration with custom storage engines (localStorage)
+version: 0.8.1
 homepage: https://github.com/Cretezy/redux_persist/tree/master/packages/redux_persist_web
 author: Charles Crete <charles@cretezy.com>
 
@@ -8,7 +8,7 @@ environment:
   sdk: ">=1.24.0 <3.0.0"
 
 dependencies:
-  redux_persist: "^0.8.0"
+  redux_persist: "^0.8.2"
 
 # Used for development
 #dependency_overrides:
