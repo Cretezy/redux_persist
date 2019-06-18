@@ -2,9 +2,8 @@
 
 Flutter Storage Engine for [`redux_persist`](https://pub.dartlang.org/packages/redux_persist).
 
-Can either save to [`shared_preferences`](https://pub.dartlang.org/packages/shared_preferences)
-(default, recommended), or your
-[application document directory](https://pub.dartlang.org/packages/path_provider).
+Can either save to your [application document directory](https://pub.dartlang.org/packages/path_provider)
+(default, recommended), or [`shared_preferences`](https://pub.dartlang.org/packages/shared_preferences).
 
 ## Usage
 
