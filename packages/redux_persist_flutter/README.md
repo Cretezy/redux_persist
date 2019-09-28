@@ -15,7 +15,7 @@ final persistor = Persistor<State>(
 ```
 
 It is recommended to load initial state before calling `runApp` to let Flutter
-show the slash screen until we are ready to render.
+show the splash screen until we are ready to render.
 
 ## Locations
 
