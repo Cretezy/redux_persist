@@ -1,3 +1,11 @@
+## `0.8.2` - 2019-08-12
+
+* Upgrade dependencies
+
+## `0.8.1` - 2019-02-11
+
+* Upgrade dependencies
+
 ## `0.8.0` - 2018-11-27
 
 * Release v0.8.0. Last v0.x release line.

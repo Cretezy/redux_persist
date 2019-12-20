@@ -1,6 +1,6 @@
 name: redux_persist_flutter
 description: Redux Persist Flutter Integration with custom storage engines
-version: 0.8.1
+version: 0.8.2
 homepage: https://github.com/Cretezy/redux_persist/tree/master/packages/redux_persist_flutter
 author: Charles Crete <charles@cretezy.com>
 
@@ -10,8 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: "flutter"
-  path_provider: "^1.1.2"
-  shared_preferences: "^0.5.1+1"
+  path_provider: "^1.2.0"
+  shared_preferences: "^0.5.3"
   redux_persist: "^0.8.0"
 
 # Used for development

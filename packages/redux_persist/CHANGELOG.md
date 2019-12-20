@@ -1,3 +1,7 @@
+## `0.8.3` - 2019-12-19
+
+* Allow `redux` 4
+
 ## `0.8.2` - 2019-03-03
 
 * Use `rethrow` for errors.
