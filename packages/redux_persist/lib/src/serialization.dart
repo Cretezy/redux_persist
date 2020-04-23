@@ -3,9 +3,9 @@ import 'dart:typed_data';
 
 /// Serializer interface for turning state ([T]) into [Uint8List], and back
 abstract class StateSerializer<T> {
-  external Uint8List encode(T state);
+  Uint8List encode(T state);
 
-  external T decode(Uint8List data);
+  T decode(Uint8List data);
 }
 
 class JsonSerializer<T> implements StateSerializer<T> {

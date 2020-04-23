@@ -5,10 +5,10 @@ import 'dart:typed_data';
 /// Interface for storage engines
 abstract class StorageEngine {
   /// Save state ([data] could be null)
-  external Future<void> save(Uint8List data);
+  Future<void> save(Uint8List data);
 
   /// Load state (can return null)
-  external Future<Uint8List> load();
+  Future<Uint8List> load();
 }
 
 /// Storage engine to save to file.

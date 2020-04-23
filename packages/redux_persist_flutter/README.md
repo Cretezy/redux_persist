@@ -31,6 +31,10 @@ FlutterStorage(location: FlutterSaveLocation.sharedPreferences);
 FlutterStorage(location: FlutterSaveLocation.documentFile);
 ```
 
+## Flutter Web
+
+Flutter Web is supported using the `shared_preferences` (`FlutterSaveLocation.sharedPreferences`) storage.
+
 ## Key
 
 You can pass a `key` argument to `FlutterStorage` to provide a key

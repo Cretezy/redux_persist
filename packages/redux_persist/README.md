@@ -98,9 +98,9 @@ You can use different storage engines for different application types:
 
   ```dart
   abstract class StorageEngine {
-    external Future<void> save(Uint8List data);
+    Future<void> save(Uint8List data);
 
-    external Future<Uint8List> load();
+    Future<Uint8List> load();
   }
   ```
   
@@ -119,8 +119,8 @@ You can use one of the [built in serializers](./lib/src/serialization.dart) such
 
   ```dart
   abstract class StateSerializer<T> {
-    external Uint8List encode(T state);
-    external T decode(Uint8List data);
+    Uint8List encode(T state);
+    T decode(Uint8List data);
   }
   ```
   
