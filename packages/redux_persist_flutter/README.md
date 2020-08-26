@@ -40,6 +40,11 @@ Flutter Web is supported using the `shared_preferences` (`FlutterSaveLocation.sh
 You can pass a `key` argument to `FlutterStorage` to provide a key
 for the file name (document file) or the shared preference key.
 
+## Backups
+
+Android may keep files around [after uninstalling an app](https://github.com/Cretezy/redux_persist/issues/39).
+If you don't want this behaviour, add `android:allowBackup="false"` to `<application>` in `android/app/src/main/AndroidManifest.xml`.
+
 ## Features and bugs
 
 Please file feature requests and bugs at the

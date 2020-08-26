@@ -1,6 +1,8 @@
-## `0.8.3` - 2020-04-22
+## `0.8.3` - 2020-08-28
 
 * Add Web Note
+* Update with backup note
+* Update dependencies
 
 ## `0.8.2` - 2019-08-12
 
