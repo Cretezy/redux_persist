@@ -7,7 +7,7 @@ void main() {
     final initialState = "hello";
     final storage = MemoryStorage(serializer.encode(initialState));
 
-    final persistor = Persistor<String>(
+    final persistor = Persistor<String?>(
       storage: storage,
       serializer: serializer,
     );
@@ -21,7 +21,7 @@ void main() {
     final serializer = StringSerializer();
     final storage = MemoryStorage();
 
-    final persistor = Persistor<String>(
+    final persistor = Persistor<String?>(
       storage: storage,
       serializer: serializer,
     );
@@ -34,7 +34,7 @@ void main() {
   });
 
   test("json serializes empty state", () async {
-    final serializer = JsonSerializer<Object>((dynamic data) => data);
+    final serializer = JsonSerializer<Object>(((dynamic data) => data));
 
     expect(serializer.decode(null), equals(null));
   });
