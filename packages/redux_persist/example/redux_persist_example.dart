@@ -12,6 +12,7 @@ void main() async {
   // Load initial state
   final initialState = await persistor.load();
 
+  // ignore: unused_local_variable
   final store = Store<State>(
     reducer,
     initialState: initialState ?? State(),

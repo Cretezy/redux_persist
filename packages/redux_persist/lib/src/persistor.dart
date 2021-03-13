@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:meta/meta.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_persist/src/exceptions.dart';
 import 'package:redux_persist/src/serialization.dart';
