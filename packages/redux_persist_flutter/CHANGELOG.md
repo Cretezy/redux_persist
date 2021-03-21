@@ -1,3 +1,7 @@
+## `0.9.0` - 2021-03-21
+
+- Add null-safety support. Required Dart >=2.12
+
 ## `0.8.3` - 2020-08-28
 
 * Add Web Note
