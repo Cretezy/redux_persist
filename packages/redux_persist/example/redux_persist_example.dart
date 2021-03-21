@@ -12,6 +12,7 @@ void main() async {
   // Load initial state
   final initialState = await persistor.load();
 
+  // ignore: unused_local_variable
   final store = Store<State>(
     reducer,
     initialState: initialState ?? State(),
@@ -22,23 +23,23 @@ void main() async {
 }
 
 class State {
-  final int counter;
+  final int? counter;
 
   State({this.counter = 0});
 
-  State copyWith({int counter}) => State(counter: counter ?? this.counter);
+  State copyWith({int? counter}) => State(counter: counter ?? this.counter);
 
-  static State fromJson(dynamic json) => State(counter: json["counter"] as int);
+  static State fromJson(dynamic json) => State(counter: json["counter"] as int?);
 
   dynamic toJson() => {'counter': counter};
 }
 
 class IncrementCounterAction {}
 
-State reducer(State state, Object action) {
+State reducer(State state, Object? action) {
   if (action is IncrementCounterAction) {
     // Increment
-    return state.copyWith(counter: state.counter + 1);
+    return state.copyWith(counter: state.counter! + 1);
   }
 
   return state;

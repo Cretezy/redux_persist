@@ -5,10 +5,10 @@ import 'dart:typed_data';
 /// Interface for storage engines
 abstract class StorageEngine {
   /// Save state ([data] could be null)
-  Future<void> save(Uint8List data);
+  Future<void> save(Uint8List? data);
 
   /// Load state (can return null)
-  Future<Uint8List> load();
+  Future<Uint8List?> load();
 }
 
 /// Storage engine to save to file.
@@ -19,7 +19,7 @@ class FileStorage implements StorageEngine {
   FileStorage(this.file);
 
   @override
-  Future<Uint8List> load() async {
+  Future<Uint8List?> load() async {
     if (await file.exists()) {
       return Uint8List.fromList(await file.readAsBytes());
     }
@@ -28,7 +28,7 @@ class FileStorage implements StorageEngine {
   }
 
   @override
-  Future<void> save(Uint8List data) async {
+  Future<void> save(Uint8List? data) async {
     await file.writeAsBytes(data ?? Uint8List(0));
   }
 }
@@ -37,13 +37,13 @@ class FileStorage implements StorageEngine {
 /// Do not use in production, this doesn't persist to disk.
 class MemoryStorage implements StorageEngine {
   /// Internal memory.
-  Uint8List _memory;
+  Uint8List? _memory;
 
-  MemoryStorage([Uint8List memory]) : _memory = memory;
-
-  @override
-  Future<Uint8List> load() async => _memory;
+  MemoryStorage([Uint8List? memory]) : _memory = memory;
 
   @override
-  Future<void> save(Uint8List data) async => _memory = data;
+  Future<Uint8List?> load() async => _memory;
+
+  @override
+  Future<void> save(Uint8List? data) async => _memory = data;
 }

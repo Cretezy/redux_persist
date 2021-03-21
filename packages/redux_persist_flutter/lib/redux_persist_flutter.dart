@@ -20,7 +20,7 @@ enum FlutterSaveLocation {
 /// Storage engine to use with Flutter.
 /// Proxy of SharedPreferenceEngine and DocumentFileEngine.
 class FlutterStorage implements StorageEngine {
-  StorageEngine _locationEngine;
+  late StorageEngine _locationEngine;
 
   FlutterStorage({
     String key = "app",
@@ -39,10 +39,10 @@ class FlutterStorage implements StorageEngine {
   }
 
   @override
-  Future<Uint8List> load() => _locationEngine.load();
+  Future<Uint8List?> load() => _locationEngine.load();
 
   @override
-  Future<void> save(Uint8List json) => _locationEngine.save(json);
+  Future<void> save(Uint8List? json) => _locationEngine.save(json);
 }
 
 /// Storage engine to save to application document directory.
@@ -53,7 +53,7 @@ class DocumentFileEngine implements StorageEngine {
   DocumentFileEngine([this.key = "app"]);
 
   @override
-  Future<Uint8List> load() async {
+  Future<Uint8List?> load() async {
     final file = await _getFile();
 
     if (await file.exists()) {
@@ -65,10 +65,10 @@ class DocumentFileEngine implements StorageEngine {
   }
 
   @override
-  Future<void> save(Uint8List data) async {
+  Future<void> save(Uint8List? data) async {
     final file = await _getFile();
     // Write as json
-    await file.writeAsBytes(data);
+    await file.writeAsBytes(data!);
   }
 
   Future<File> _getFile() async {
@@ -87,15 +87,15 @@ class SharedPreferencesEngine implements StorageEngine {
   SharedPreferencesEngine([this.key = "app"]);
 
   @override
-  Future<Uint8List> load() async {
+  Future<Uint8List?> load() async {
     final sharedPreferences = await _getSharedPreferences();
     return stringToUint8List(sharedPreferences.getString(key));
   }
 
   @override
-  Future<void> save(Uint8List data) async {
+  Future<void> save(Uint8List? data) async {
     final sharedPreferences = await _getSharedPreferences();
-    sharedPreferences.setString(key, uint8ListToString(data));
+    sharedPreferences.setString(key, uint8ListToString(data)!);
   }
 
   Future<SharedPreferences> _getSharedPreferences() async =>

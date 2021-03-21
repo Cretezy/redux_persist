@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:meta/meta.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_persist/src/exceptions.dart';
 import 'package:redux_persist/src/serialization.dart';
@@ -15,10 +14,10 @@ class Persistor<T> {
   final StorageEngine storage;
 
   /// Transformations on state to be applied on save/load.
-  final Transforms<T> transforms;
+  final Transforms<T>? transforms;
 
   /// Transformations on raw data to be applied on save/load.
-  final RawTransforms rawTransforms;
+  final RawTransforms? rawTransforms;
 
   /// State serialized used to serialize the state to/from bytes.
   final StateSerializer<T> serializer;
@@ -30,17 +29,17 @@ class Persistor<T> {
   /// It is recommended to set a duration of a few (2-5) seconds to reduce
   /// storage calls, while preventing data loss.
   /// A duration of zero (default) will try to save on next available cycle
-  Duration throttleDuration;
+  Duration? throttleDuration;
 
   /// Synchronization lock for saving
   final _saveLock = Lock();
 
   /// Function that if not null, returns if an action should trigger a save.
-  final bool Function(Store<T> store, dynamic action) shouldSave;
+  final bool Function(Store<T> store, dynamic action)? shouldSave;
 
   Persistor({
-    @required this.storage,
-    @required this.serializer,
+    required this.storage,
+    required this.serializer,
     this.transforms,
     this.rawTransforms,
     this.debug = false,
@@ -50,12 +49,12 @@ class Persistor<T> {
 
   /// Middleware used for Redux which saves on each action.
   Middleware<T> createMiddleware() {
-    Timer _saveTimer;
+    Timer? _saveTimer;
 
     return (Store<T> store, dynamic action, NextDispatcher next) {
       next(action);
 
-      if (shouldSave != null && shouldSave(store, action) != true) {
+      if (shouldSave != null && shouldSave!(store, action) != true) {
         return;
       }
 
@@ -64,7 +63,7 @@ class Persistor<T> {
         if (throttleDuration != null) {
           // Only create a new timer if the last one hasn't been run.
           if (_saveTimer?.isActive != true) {
-            _saveTimer = Timer(throttleDuration, () => save(store.state));
+            _saveTimer = Timer(throttleDuration!, () => save(store.state));
           }
         } else {
           save(store.state);
@@ -74,14 +73,14 @@ class Persistor<T> {
   }
 
   /// Load state from storage
-  Future<T> load() async {
+  Future<T?> load() async {
     try {
       _printDebug('Starting load...');
 
       _printDebug('Loading from storage');
 
       // Load from storage
-      Uint8List data;
+      Uint8List? data;
       try {
         data = await storage.load();
       } catch (error) {
@@ -103,7 +102,7 @@ class Persistor<T> {
 
       _printDebug('Deserializing');
 
-      T state;
+      T? state;
       try {
         state = serializer.decode(data);
       } catch (error) {
