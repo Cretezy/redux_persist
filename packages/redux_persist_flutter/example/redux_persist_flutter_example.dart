@@ -6,6 +6,8 @@ import 'package:redux_persist/redux_persist.dart';
 import 'package:redux_persist_flutter/redux_persist_flutter.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Create Persistor
   final persistor = Persistor<AppState>(
     storage: FlutterStorage(),
@@ -32,18 +34,22 @@ class AppState {
 
   AppState({this.counter = 0});
 
-  AppState copyWith({int counter}) =>
+  AppState copyWith({int? counter}) =>
       AppState(counter: counter ?? this.counter);
 
-  static AppState fromJson(dynamic json) =>
-      AppState(counter: json["counter"] as int);
+  static AppState? fromJson(dynamic json) {
+    if (json == null) {
+      return null;
+    }
+    return AppState(counter: json["counter"] as int);
+  }
 
   dynamic toJson() => {'counter': counter};
 }
 
 class IncrementCounterAction {}
 
-AppState reducer(AppState state, Object action) {
+AppState reducer(AppState state, Object? action) {
   if (action is IncrementCounterAction) {
     // Increment
     return state.copyWith(counter: state.counter + 1);
@@ -56,7 +62,7 @@ AppState reducer(AppState state, Object action) {
 class App extends StatelessWidget {
   final Store<AppState> store;
 
-  const App({Key key, this.store}) : super(key: key);
+  const App({Key? key, required this.store}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -86,9 +92,9 @@ class HomePage extends StatelessWidget {
             StoreConnector<AppState, String>(
               converter: (store) => store.state.counter.toString(),
               builder: (context, count) => Text(
-                    '$count',
-                    style: Theme.of(context).textTheme.display1,
-                  ),
+                '$count',
+                style: Theme.of(context).textTheme.display1,
+              ),
             ),
           ],
         ),
@@ -97,10 +103,10 @@ class HomePage extends StatelessWidget {
         // Return a function to dispatch an increment action
         converter: (store) => () => store.dispatch(IncrementCounterAction()),
         builder: (_, increment) => FloatingActionButton(
-              onPressed: increment,
-              tooltip: 'Increment',
-              child: Icon(Icons.add),
-            ),
+          onPressed: increment,
+          tooltip: 'Increment',
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }
