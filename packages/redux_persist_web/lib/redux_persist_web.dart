@@ -16,10 +16,10 @@ class WebStorage implements StorageEngine {
 
   @override
   Future<Uint8List> load() =>
-      Future.value(stringToUint8List(window.localStorage[key]));
+      Future.value(stringToUint8List(window.localStorage[key] ?? ""));
 
   @override
-  Future<void> save(Uint8List data) async {
-    window.localStorage[key] = uint8ListToString(data);
+  Future<void> save(Uint8List? data) async {
+    window.localStorage[key] = uint8ListToString(data) ?? "";
   }
 }
