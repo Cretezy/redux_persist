@@ -27,7 +27,7 @@ class AppState {
 
   AppState({this.counter = 0});
 
-  AppState copyWith({int counter}) =>
+  AppState copyWith({int? counter}) =>
       AppState(counter: counter ?? this.counter);
 
   static AppState fromJson(dynamic json) =>
@@ -38,7 +38,7 @@ class AppState {
 
 class IncrementCounterAction {}
 
-AppState reducer(AppState state, Object action) {
+AppState reducer(AppState state, dynamic action) {
   if (action is IncrementCounterAction) {
     // Increment
     return state.copyWith(counter: state.counter + 1);
